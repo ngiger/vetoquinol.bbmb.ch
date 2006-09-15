@@ -1,0 +1,46 @@
+#!/usr/bin/env ruby
+
+$KCODE = 'u'
+
+require 'drb'
+require 'logger'
+require 'bbmb/config'
+require 'bbmb/util/server'
+require 'encoding/character/utf-8'
+
+module BBMB
+  require File.join('bbmb', 'persistence', @config.persistence)
+  case @config.persistence
+  when 'odba'
+    DRb.install_id_conv ODBA::DRbIdConv.new
+    @persistence = BBMB::Persistence::ODBA
+  end
+
+  log_file = @config.log_file
+  if(log_file.is_a?(String))
+    FileUtils.mkdir_p(File.dirname(log_file))
+    log_file = File.open(log_file, 'a')
+    at_exit { log_file.close }
+  end
+  @logger = Logger.new(log_file)
+  @logger.level = Logger.const_get(@config.log_level)
+
+  begin
+    @server = BBMB::Util::Server.new(@persistence)
+    @server.extend(DRbUndumped)
+    if(@config.update?)
+      @server.run_updater
+    end
+
+    url = @config.server_url
+    url.untaint
+    DRb.start_service(url, @server)
+    $SAFE = 1
+    @logger.info('start') { 
+      sprintf("starting bbmb-server on %s", url) }
+    DRb.thread.join
+  rescue Exception => error
+    @logger.error('fatal') { error }
+    raise
+  end
+end
