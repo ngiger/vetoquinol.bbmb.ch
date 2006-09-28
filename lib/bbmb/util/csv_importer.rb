@@ -2,9 +2,8 @@
 # Util::CsvImporter -- bbmb.ch -- 14.09.2006 -- hwyss@ywesee.com
 
 require 'bbmb'
+require 'bbmb/model/customer'
 require 'bbmb/model/product'
-require 'bbmb/model/user'
-require 'csv'
 require 'encoding/character/utf-8'
 require 'iconv'
 
@@ -12,25 +11,35 @@ module BBMB
   module Util
     class CsvImporter
       def import(io, persistence=BBMB.persistence)
-        CSV.parse(io, ";") { |record|
+        ## amazingly, all three possible non-naive approaches to parsing 
+        #  CSV fail with the test-data provided by Vetoquinol. For now, use the 
+        #  naive approach
+        #CSV.parse(io, ";") { |record|
+        #FasterCSV.parse(io, :col_sep => ";", :row_sep => "\n") { |record|
+        #CSVParser.parse(io, false, ';').each { |record|
+        count = 0
+        io.each { |line|
+          record = line.split(';')
           object = import_record(record)
           persistence.save(object)
+          count += 1
         }
+        count
       end
       def string(str)
-        str = u(Iconv.new('utf-8', 'latin1').iconv(str.to_s))
+        str = u(Iconv.new('utf-8', 'latin1').iconv(str.to_s)).strip
         str unless str.empty? 
       end
     end
-    class UserImporter < CsvImporter
-      USER_MAP = {
+    class CustomerImporter < CsvImporter
+      CUSTOMER_MAP = {
         4		=>	:drtitle,
         5		=>	:organisation,
         6		=>	:address1,
         7		=>	:address2,
         8		=>	:address3,
         10	=>	:plz,
-        11	=>	:location,
+        11	=>	:city,
         12	=>	:phone_business,
         13	=>	:phone_mobile,
         14	=>	:phone_private,
@@ -39,12 +48,15 @@ module BBMB
       }	
       def import_record(record)
         customer_id = string(record[0])
-        user = Model::User.find_by_customer_id(customer_id) \
-          || Model::User.new(customer_id)
-        USER_MAP.each { |idx, name|
-          user.send("#{name}=", string(record[idx]))
+        customer = Model::Customer.find_by_customer_id(customer_id) \
+          || Model::Customer.new(customer_id)
+        # TODO: protect user-edited data
+        CUSTOMER_MAP.each { |idx, name|
+          unless customer.protects? name
+            customer.send("#{name}=", string(record[idx]))
+          end
         }
-        user
+        customer
       end
     end
     class ProductImporter < CsvImporter

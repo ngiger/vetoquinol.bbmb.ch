@@ -6,23 +6,23 @@ $: << File.expand_path('../../lib', File.dirname(__FILE__))
 
 require 'test/unit'
 require 'bbmb/util/updater'
-require 'persistence/test'
+require 'stub/persistence'
 require 'flexmock'
 
 module BBMB
   module Util
     class TestUpdater < Test::Unit::TestCase
       include FlexMock::TestCase
-      def test_import_users
+      def test_import_customers
         persistence = flexmock("persistence")
-        flexstub(UserImporter).should_receive(:new).times(1).and_return { 
+        flexstub(CustomerImporter).should_receive(:new).times(1).and_return { 
           importer = flexmock('importer')
           importer.should_receive(:import).times(1).and_return { |io|
             assert_equal('data', io)
           }
           importer
         }
-        Updater.import_users("data")
+        Updater.import_customers("data")
       end
       def test_import_products
         persistence = flexmock("persistence")
@@ -36,7 +36,7 @@ module BBMB
         Updater.import_products("data")
       end
       def test_run__ywskund_csv
-        flexstub(Updater).should_receive(:import_users).times(1).and_return { 
+        flexstub(Updater).should_receive(:import_customers).times(1).and_return { 
           |data, prs|
           assert_equal("mockdata", data)
         }

@@ -8,9 +8,9 @@ module BBMB
     class Product
       include ODBA::Persistable
       odba_index :article_number
-      odba_index :article_ean13
-      odba_index :article_descr
-      odba_index :article_pcode
+      odba_index :ean13
+      odba_index :description
+      odba_index :pcode
     end
   end
 end

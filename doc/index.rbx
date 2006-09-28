@@ -2,6 +2,7 @@
 # index.rbx -- bbmb.ch -- hwyss@ywesee.com
 
 require 'sbsm/request'
+require 'encoding/character/utf-8'
 
 DRb.start_service('druby://localhost:0')
 

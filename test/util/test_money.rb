@@ -40,6 +40,32 @@ module BBMB
         assert_equal(m, "15.55")
         assert_not_equal(m, "15.56")
       end
+      def test_add
+        m = Money.new(15.55)
+        n = Money.new(12.45)
+        o = m + n
+        assert_instance_of(Money, o)
+        assert_equal(28, o)
+      end
+      def test_subtract
+        m = Money.new(15.55)
+        n = Money.new(12.45)
+        o = m - n
+        assert_instance_of(Money, o)
+        assert_equal(3.1, o)
+      end
+      def test_multiply
+        m = Money.new(15.55)
+        n = m * 4
+        assert_instance_of(Money, n)
+        assert_equal(62.20, n)
+      end
+      def test_divide
+        m = Money.new(16.80)
+        n = m / 4
+        assert_instance_of(Money, n)
+        assert_equal(4.20, n)
+      end
     end
   end
 end

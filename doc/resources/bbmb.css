@@ -1,0 +1,182 @@
+body
+{
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	background-color: #FFFFFF;
+	scrollbar-base-color: #00AA67;
+	scrollbar-arrow-color: #FFFFFF;
+	background-image: url(/resources/tierchen.jpg);
+	background-repeat: repeat-x;
+	background-position: 0px 0px;
+}
+a, a:visited {
+  color: blue;
+  text-decoration: none;
+}
+a:hover {
+  color: #00A46D;
+}
+a[name=description], a[name=commit_time], td.description {
+  font-size: 14px;
+  font-weight: bold;
+}
+div#divider {
+	background-color: #00A46D;
+  height: 20px;
+}
+div#head img {
+	margin-bottom: 43px;
+}
+div#info td {
+  vertical-align: top;
+}
+div#welcome {
+  font-weight: bold;
+  padding: 4px;
+}
+div#logged-in-as {
+  float: right;
+  font-weight: bold;
+  padding: 4px;
+}
+div#filter, div#search { 
+  float: right;
+}
+div#foot {
+  color: white;
+	background-color: #00A46D;
+  padding: 4px;
+}
+div#foot a {
+  color: white;
+	background-color: #00A46D;
+}
+div#navigation {
+  float: right;
+}
+div#navigation a {
+  padding: 0px 4px;
+  border-left: 1px solid white;
+}
+div#navigation a:first-child {
+  border-left: 0px;
+}
+div#navigation a {
+  color: blue;
+}
+div#navigation a:link, div#navigation a:visited {
+  color: white;
+}
+div#navigation a:hover {
+  color: blue;
+}
+div#order-total, td.order-total {
+  font-weight: bold;
+  padding: 8px;
+	background-color: #EAEDEF;
+  border-top: 1px solid #BBB;
+}
+div#order-total label {
+  margin-right: 4px;
+}
+div#pager {
+  padding: 4px;
+}
+div.toggler {
+	cursor: default;
+	border: 1px solid #BBB;
+	padding: 2px;
+	background-color: #CCC;
+}
+div#toolbar {
+  min-height: 20px;
+}
+form {
+  margin: 0px;
+}
+form#clear, form#transfer-dat {
+  display: inline;
+}
+input[type=text], input[type=password] {
+  width: 200px;
+}
+input[name=city] {
+  width: 148px;
+}
+input[name=plz], input.tiny, td.tiny {
+  width: 49px;
+}
+label {
+  font-weight: bold;
+}
+label.error {
+  color: red;
+}
+span.guide {
+  padding: 4px;
+}
+table#favorites {
+	background-color:#CEF;
+}
+table.list {
+  width: 100%
+}
+td, th {
+  padding: 4px
+}
+td.big {
+	font-weight:bold;
+	font-size:14px;
+}
+td.additional-info {
+  padding-left: 8px;
+}
+td.contact {
+  font-weight: bold;
+	background-color: #EAEDEF;
+}
+td.delete {
+  width: 60px;
+  font-size: 11px;
+}
+td.new-customer {
+  padding-top: 30px;
+  vertical-align: top;
+}
+td.new-customer a {
+	color: #00A46D;
+	background-color: #FFFFFF;
+}
+td.new-customer a:hover {
+  text-decoration: underline;
+}
+td.processingerror {
+  color: red;
+  font-weight: bold;
+}
+td.right, th.right, td.total {
+  text-align: right;
+}
+td.total {
+  font-weight: bold;
+}
+textarea {
+	font-size:12px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	width: 200px;
+	height: 80px;
+}
+th, th a, th a:visited {
+  text-align: left;
+  color: white;
+	background-color: #00A46D;
+}
+th a:hover {
+  color: blue;
+}
+tr.bg {
+	background-color: #EAEDEF;
+}
+tr#controls {
+	background-color: #FFF;
+}

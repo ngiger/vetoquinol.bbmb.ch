@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 # Persistence::Test -- bbmb.ch -- 14.09.2006 -- hwyss@ywesee.com
 
+require 'bbmb/model/customer'
 require 'bbmb/model/product'
-require 'bbmb/model/user'
 
 class Object
   def meta_class; class << self; self; end; end
@@ -43,10 +43,14 @@ module BBMB
     class Product
       include Persistable
       index :article_number
+      index :ean13
+      index :description
+      index :pcode
     end
-    class User
+    class Customer
       include Persistable
       index :customer_id
+      index :email
     end
   end
 end

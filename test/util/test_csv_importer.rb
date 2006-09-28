@@ -6,7 +6,7 @@ $: << File.expand_path('../../lib', File.dirname(__FILE__))
 
 require 'test/unit'
 require 'bbmb/util/csv_importer'
-require 'persistence/test'
+require 'stub/persistence'
 require 'flexmock'
 
 module BBMB
@@ -18,10 +18,12 @@ module BBMB
         assert_equal(u("\303\244\303\266\303\274"), importer.string('הצü'))
       end
     end
-    class TestUserImporter < Test::Unit::TestCase
+    class TestCustomerImporter < Test::Unit::TestCase
       include FlexMock::TestCase
       def setup
-        Model::User.clear_instances
+        Model::Customer.clear_instances
+        BBMB.server = flexmock('server')
+        BBMB.server.should_ignore_missing
       end
       def test_import
         src = <<-EOS
@@ -37,31 +39,61 @@ module BBMB
 15078;1061;;VETOQU;;CLIENT SUISSE AYANT DROIT TVS;RUE DE BERN;;;;3123;BELP;;;;00 41 31 818 56 50; 
         EOS
         persistence = flexmock("persistence")
-        persistence.should_receive(:save).times(10).with(Model::User)
-        UserImporter.new.import(src, persistence)
+        persistence.should_receive(:save).times(10).and_return { |customer|
+          assert_instance_of(Model::Customer, customer)
+        }
+        CustomerImporter.new.import(src, persistence)
       end
       def test_import_record
         line = <<-EOS
 15047;1061;;VETOQU;Herr Dr.med.vet.;Aeberhard Ueli;Gemeindehausplatz 4;rue strasse;address3;;5323;BERNE;business;mobile;private;fax;email
         EOS
-        importer = UserImporter.new
-        record = CSV.parse_line(line, ";")
-        user = importer.import_record(record)
-        assert_instance_of(Model::User, user)
-        assert_equal("15047", user.customer_id)
-        assert_equal("Herr Dr.med.vet.", user.drtitle)
-        assert_equal("Aeberhard Ueli", user.organisation)
-        assert_equal("Gemeindehausplatz 4", user.address1)
-        assert_equal("rue strasse", user.address2)
-        assert_equal("address3", user.address3)
-        assert_equal("5323", user.plz)
-        assert_equal("BERNE", user.location)
-        assert_equal("business", user.phone_business)
-        assert_equal("private", user.phone_private)
-        assert_equal("mobile", user.phone_mobile)
-        assert_equal("fax", user.fax)
-        assert_equal("email", user.email)
-        assert_equal(user, importer.import_record(record))
+        importer = CustomerImporter.new
+        persistence = flexmock("persistence")
+        persistence.should_receive(:save).and_return { |customer|
+          assert_instance_of(Model::Customer, customer)
+          assert_equal("15047", customer.customer_id)
+          assert_equal("Herr Dr.med.vet.", customer.drtitle)
+          assert_equal("Aeberhard Ueli", customer.organisation)
+          assert_equal("Gemeindehausplatz 4", customer.address1)
+          assert_equal("rue strasse", customer.address2)
+          assert_equal("address3", customer.address3)
+          assert_equal("5323", customer.plz)
+          assert_equal("BERNE", customer.city)
+          assert_equal("business", customer.phone_business)
+          assert_equal("private", customer.phone_private)
+          assert_equal("mobile", customer.phone_mobile)
+          assert_equal("fax", customer.fax)
+          assert_equal("email", customer.email)
+        }
+        importer.import(line, persistence)
+      end
+      def test_import_record__protected_data
+        line = <<-EOS
+15047;1061;;VETOQU;Herr Dr.med.vet.;Aeberhard Ueli;Gemeindehausplatz 4;rue strasse;address3;;5323;BERNE;business;mobile;private;fax;email
+        EOS
+        customer = Model::Customer.new("15047")
+        customer.address2 = 'corrected line'
+        customer.protect!(:address2)
+        importer = CustomerImporter.new
+        persistence = flexmock("persistence")
+        persistence.should_receive(:save).and_return { |customer|
+          assert_instance_of(Model::Customer, customer)
+          assert_equal("15047", customer.customer_id)
+          assert_equal("Herr Dr.med.vet.", customer.drtitle)
+          assert_equal("Aeberhard Ueli", customer.organisation)
+          assert_equal("Gemeindehausplatz 4", customer.address1)
+          assert_equal("corrected line", customer.address2)
+          assert_equal("address3", customer.address3)
+          assert_equal("5323", customer.plz)
+          assert_equal("BERNE", customer.city)
+          assert_equal("business", customer.phone_business)
+          assert_equal("private", customer.phone_private)
+          assert_equal("mobile", customer.phone_mobile)
+          assert_equal("fax", customer.fax)
+          assert_equal("email", customer.email)
+        }
+        importer.import(line, persistence)
       end
     end
     class TestProductImporter < Test::Unit::TestCase
@@ -90,39 +122,56 @@ gesperrt;0303688;;Oribiotic pom 10g ch;;0;;;;;;;;;Y;;;;;;;;;;;VETOQU;112;;0;0;0;
         line = <<-EOS
 gesperrt;0313720;;Marbocyl 10% sol 50ml ch;;8.6500;;;;;;;;;3;;;;;;;;;;;VETOQU;112;;0;0;0;0;0;0;0;0;0;0;0;0;;no
         EOS
-        record = CSV.parse_line(line, ";")
-        product = ProductImporter.new.import_record(record)
-        assert_instance_of(Model::Product, product)
-        assert_equal("0313720", product.article_number)
-        assert_equal("gesperrt", product.status)
-        assert_nil(product.ean13)
-        assert_equal("Marbocyl 10% sol 50ml ch", product.description)
-        assert_equal(3, product.mwst)
-        assert_nil(product.pcode)
-        assert_equal(0, product.l1_qty)
-        assert_equal(0, product.l1_price)
-        assert_equal(0, product.l2_qty)
-        assert_equal(0, product.l2_price)
-        assert_equal(0, product.l3_qty)
-        assert_equal(0, product.l3_price)
-        assert_equal(0, product.l4_qty)
-        assert_equal(0, product.l4_price)
-        assert_equal(0, product.l5_qty)
-        assert_equal(0, product.l5_price)
-        assert_equal(0, product.l6_qty)
-        assert_equal(0, product.l6_price)
+        persistence = flexmock("persistence")
+        persistence.should_receive(:save).and_return { |product|
+          assert_instance_of(Model::Product, product)
+          assert_equal("0313720", product.article_number)
+          assert_equal("gesperrt", product.status)
+          assert_nil(product.ean13)
+          assert_equal("Marbocyl 10% sol 50ml ch", product.description)
+          assert_equal(3, product.mwst)
+          assert_nil(product.pcode)
+          assert_equal(0, product.l1_qty)
+          assert_equal(0, product.l1_price)
+          assert_equal(0, product.l2_qty)
+          assert_equal(0, product.l2_price)
+          assert_equal(0, product.l3_qty)
+          assert_equal(0, product.l3_price)
+          assert_equal(0, product.l4_qty)
+          assert_equal(0, product.l4_price)
+          assert_equal(0, product.l5_qty)
+          assert_equal(0, product.l5_price)
+          assert_equal(0, product.l6_qty)
+          assert_equal(0, product.l6_price)
+        }
+        ProductImporter.new.import(line, persistence)
       end
       def test_import_record__ean
         line = <<-EOS
 gesperrt;0801031;0340117772763;Equi biotin forte 1 kg;;0;;;;;;;;;3;;;;;;;;;;;VETOQU;112;;0;0;0;0;0;0;0;0;0;0;0;0;;no
         EOS
-        record = CSV.parse_line(line, ";")
-        product = ProductImporter.new.import_record(record)
-        assert_instance_of(Model::Product, product)
-        assert_equal("0801031", product.article_number)
-        assert_equal("gesperrt", product.status)
-        assert_equal("0340117772763", product.ean13)
-        assert_equal("Equi biotin forte 1 kg", product.description)
+        persistence = flexmock("persistence")
+        persistence.should_receive(:save).and_return { |product|
+          assert_instance_of(Model::Product, product)
+          assert_equal("0801031", product.article_number)
+          assert_equal("gesperrt", product.status)
+          assert_equal("0340117772763", product.ean13)
+          assert_equal("Equi biotin forte 1 kg", product.description)
+        }
+        ProductImporter.new.import(line, persistence)
+      end
+      def test_import_record__quotes
+        line = <<-EOS
+gesperrt;402750;;Info-Katalog Eq "nor";;0;;;;;;;;;Y;;;;;;;;;;;VETOQU;112;;0;0;0;0;0;0;0;0;0;0;0;0;;no
+        EOS
+        persistence = flexmock("persistence")
+        persistence.should_receive(:save).and_return { |product|
+          assert_instance_of(Model::Product, product)
+          assert_equal("402750", product.article_number)
+          assert_equal("gesperrt", product.status)
+          assert_equal("Info-Katalog Eq \"nor\"", product.description)
+        }
+        ProductImporter.new.import(line, persistence)
       end
     end
   end

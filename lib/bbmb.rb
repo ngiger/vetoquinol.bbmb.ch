@@ -3,6 +3,6 @@
 
 module BBMB
   class << self
-    attr_accessor :config, :persistence, :logger, :server
+    attr_accessor :auth, :config, :logger, :persistence, :server
   end
 end
