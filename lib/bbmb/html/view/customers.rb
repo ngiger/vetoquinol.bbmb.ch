@@ -37,7 +37,6 @@ class Filter < HtmlGrid::DivForm
     button = HtmlGrid::Button.new(:reset, model, @session, self)
     url = @lookandfeel._event_url(event, :filter => "*")
     button.onclick = "document.location.href='#{url}'"
-    #button.value = @lookandfeel.lookup(:filter_reset)
     button
   end
 end
@@ -48,7 +47,7 @@ class CustomersList < HtmlGrid::List
     [0,0] =>	:customer_id,
     [1,0]	=>	:organisation,
     [2,0] =>  :plz,
-    [3,0]	=>	:location,
+    [3,0]	=>	:city,
     [4,0]	=>	:email,
     [5,0]	=>	:communication,
     [6,0]	=>	:valid,

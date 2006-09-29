@@ -17,7 +17,7 @@ class Validator < SBSM::Validator
   EVENTS = [ :ajax, :change_pass, :clear_favorites, :clear_order, :commit,
     :current_order, :customer, :customers, :favorites, :favorite_product,
     :home, :increment_order, :login, :logout, :order, :orders, :order_product,
-    :order_transfer, :save, :search, :search_favorites ]
+    :save, :search, :search_favorites, :transfer ]
   FILES = [ :file_chooser ]
   NUMERIC = [ :customer_id, :index, :plz, :priority, :quantity ]
   STRINGS = [ :address1, :address2, :address3, :comment, :drtitle, :fax,

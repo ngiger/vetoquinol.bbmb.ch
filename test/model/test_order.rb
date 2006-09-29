@@ -134,7 +134,7 @@ class TestOrder < Test::Unit::TestCase
 001:7601001000681
 002:ORDERX
 003:220
-010:KDCustomerId-OrderId.dat
+010:CustomerId-OrderId-20060927095012.dat
 100:YWESEE
 101:Reference
 201:CU

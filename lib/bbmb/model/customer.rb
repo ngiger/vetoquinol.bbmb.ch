@@ -11,16 +11,18 @@ class Customer
   attr_accessor :address1, :address2, :address3, :canton, :city, :drtitle,
     :ean13, :fax, :firstname, :lastname, :organisation, :phone_business,
     :phone_mobile, :phone_private, :plz, :title
-  def initialize(customer_id)
-    @protected = {}
-    @customer_id = customer_id
+  def initialize(customer_id, email=nil)
     @archive = {}
+    @customer_id = customer_id
+    @email = email
+    @favorites = Order.new(self)
+    @protected = {}
   end
-  def commit_order!
+  def commit_order!(commit_time = Time.now)
     Thread.exclusive {
       id = @archive.keys.max.to_i.next.to_s
       order = current_order
-      order.commit!(id, Time.now)
+      order.commit!(id, commit_time)
       @archive.store(id, order)
       @current_order = nil
       order

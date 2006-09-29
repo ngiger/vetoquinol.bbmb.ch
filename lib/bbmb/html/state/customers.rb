@@ -12,7 +12,7 @@ module BBMB
 class Customers < Global
   DIRECT_EVENT = :customers
   VIEW = View::Customers
-  FILTER = [ :customer_id, :organisation, :plz, :location, :email ]
+  FILTER = [ :customer_id, :organisation, :plz, :city, :email ]
   def init
     start = Time.now
     @model = BBMB.persistence.all(Model::Customer)

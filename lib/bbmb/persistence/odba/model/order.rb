@@ -10,6 +10,7 @@ module BBMB
         include ODBA::Persistable
       end
       include ODBA::Persistable
+      ODBA_SERIALIZABLE = ['@unavailable']
       alias :__old_add__ :add
       def add(quantity, product)
         if(pos = __old_add__(quantity, product))

@@ -5,6 +5,7 @@ require 'bbmb/html/state/global'
 require 'bbmb/html/state/json'
 require 'bbmb/html/view/current_order'
 require 'bbmb/util/mail'
+require 'bbmb/util/transfer_dat'
 
 module BBMB
   module Html
@@ -51,6 +52,19 @@ class CurrentOrder < Global
         @model.shipping = 0
       end
       BBMB.persistence.save(@model)
+    end
+  end
+  def transfer
+    if(io = user_input(:file_chooser))
+      order = _customer.current_order
+      TransferDat.parse(io) { |info|
+        if(product = Model::Product.find_by_pcode(info.pcode) \
+           || Model::Product.find_by_ean13(info.ean13))
+          order.increment(info.quantity, product)
+        else
+          order.unavailable.push(info)
+        end
+      }
     end
   end
 end

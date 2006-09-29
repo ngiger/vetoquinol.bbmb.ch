@@ -20,8 +20,8 @@ module BBMB
         @current_order
       end
       alias :__old_commit_order__ :commit_order!
-      def commit_order!
-        order = __old_commit_order__
+      def commit_order!(*args)
+        order = __old_commit_order__(*args)
         @archive.odba_store
         order.odba_store
         odba_store

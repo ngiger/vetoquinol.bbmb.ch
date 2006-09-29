@@ -7,6 +7,11 @@ require 'bbmb/util/numbers'
 module BBMB
   module Model
 class Order
+  class Info
+    include Util::Numbers
+    attr_accessor :ean13, :pcode, :description
+    int_accessor :quantity
+  end
   class Position
     include Util::Numbers
     attr_reader :product
@@ -30,13 +35,14 @@ class Order
   end
   include Enumerable
   include Util::Numbers
-  attr_reader :commit_id, :commit_time, :positions
+  attr_reader :commit_id, :commit_time, :positions, :unavailable
   attr_accessor :comment, :reference
   int_accessor :priority
   money_accessor :shipping
   def initialize(customer)
     @customer = customer
     @positions = []
+    @unavailable = []
   end
   def add(quantity, product)
     if(pos = position(product))
@@ -65,6 +71,7 @@ class Order
   def commit!(commit_id, commit_time)
     raise "can't commit empty order" if(empty?)
     @positions.each { |pos| pos.commit! }
+    @unavailable.clear
     @commit_time = commit_time
     @commit_id = commit_id
   end
@@ -75,7 +82,7 @@ class Order
     @positions.empty?
   end
   def filename
-    "KD%s.dat" % order_id
+    sprintf("%s-%s.dat", order_id, @commit_time.strftime('%Y%m%d%H%M%S'))
   end
   def increment(quantity, product)
     if(pos = position(product))
@@ -115,8 +122,9 @@ class Order
     if(@priority)
       lines.push "238:%i" % @priority
     end
-    lines.push "250:ADE", "251:%s" % order_id, "300:4", 
-               "301:%s" % @commit_time.strftime('%Y%m%d')
+    lines.push "250:ADE", 
+                sprintf("251:%i%05i", @customer.customer_id, @commit_id), 
+                "300:4", "301:%s" % @commit_time.strftime('%Y%m%d')
     lines.join("\n")
   end
   def order_id

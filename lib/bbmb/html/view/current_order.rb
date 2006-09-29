@@ -17,6 +17,25 @@ require 'htmlgrid/textarea'
 module BBMB
   module Html
     module View
+module ActiveX
+  def other_html_headers(context)
+    html = ''
+    if @session.client_activex?
+      cab = 'BbmbBarcodeReader.CAB#version=1,3,0,0'
+      cid = "CLSID:1311F1ED-198B-11D6-8FF9-000103484A9A"
+      if(@session.client_nt5?) 
+        cab = 'BbmbBarcodeReader2.CAB#version=2,1,0,0'
+      end
+      props = {
+        "id"			=>	"BCReader",
+        "classid"	=>	cid,
+        "codebase"=>	@lookandfeel.resource_global(:activex, cab),
+      }
+      html << context.object(props)
+    end
+    html << super
+  end
+end
 class BarcodeReader < HtmlGrid::DivForm
   EVENT = "scan"
   COMPONENTS = {
@@ -176,7 +195,7 @@ class CurrentToggleable < HtmlGrid::Composite
 end
 class TransferDat < HtmlGrid::Span
   include HtmlGrid::FormMethods
-  EVENT = :order_transfer
+  EVENT = :transfer
   FORM_ID = 'transfer-dat'
   TAG_METHOD = :multipart_form
   def init
@@ -234,6 +253,7 @@ class CurrentOrderForm < HtmlGrid::DivForm
   CSS_ID_MAP = { 1 => 'info', 2 => 'order-total' }
   EVENT = :commit
   FORM_ID = 'additional_info'
+  SORT_DEFAULT = :description
   SYMBOL_MAP = {
     :order_total => HtmlGrid::LabelText, 
   }
@@ -293,6 +313,7 @@ class CurrentOrderComposite < HtmlGrid::DivComposite
 end
 class CurrentOrder < Template
   include HtmlGrid::DojoToolkit::DojoTemplate
+  include ActiveX
   CONTENT = CurrentOrderComposite
   DOJO_DEBUG = BBMB.config.debug
   DOJO_PREFIX = {
@@ -301,7 +322,7 @@ class CurrentOrder < Template
   DOJO_REQUIRE = [ 'dojo.widget.*', 'ywesee.widget.*', 
     'ywesee.widget.InfoToggler' ] #, 'dojo.widget.Tooltip' ]
   JAVASCRIPTS = [
-    #"bcreader",
+    "bcreader",
     "order",
   ]
 end

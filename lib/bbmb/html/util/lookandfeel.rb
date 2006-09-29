@@ -127,6 +127,7 @@ class Lookandfeel < SBSM::Lookandfeel
     }
   }
   RESOURCES = {
+    :activex    => 'activex',
     :css        => 'bbmb.css',
     :dojo_js    => 'dojo/dojo.js',
     :javascript => 'javascript',

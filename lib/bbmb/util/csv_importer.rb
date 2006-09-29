@@ -28,7 +28,7 @@ module BBMB
       end
       def string(str)
         str = u(Iconv.new('utf-8', 'latin1').iconv(str.to_s)).strip
-        str unless str.empty? 
+        str.gsub(/\s+/, ' ') unless str.empty? 
       end
     end
     class CustomerImporter < CsvImporter
