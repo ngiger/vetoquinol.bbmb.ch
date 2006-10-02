@@ -15,11 +15,13 @@ class Validator < SBSM::Validator
     :title => [nil, 'title_f', 'title_m']
   }
   EVENTS = [ :ajax, :change_pass, :clear_favorites, :clear_order, :commit,
-    :current_order, :customer, :customers, :favorites, :favorite_product,
-    :home, :increment_order, :login, :logout, :order, :orders, :order_product,
-    :save, :search, :search_favorites, :transfer ]
+    :current_order, :customer, :customers, :delete_unavailable, :favorites,
+    :favorite_product, :home, :increment_order, :login, :logout, :order,
+    :orders, :order_product, :save, :scan, :search, :search_favorites,
+    :transfer ]
   FILES = [ :file_chooser ]
-  NUMERIC = [ :customer_id, :index, :plz, :priority, :quantity ]
+  NUMERIC = [ :comport, :customer_id, :EAN_13, :index, :plz, :priority,
+    :quantity ]
   STRINGS = [ :address1, :address2, :address3, :comment, :drtitle, :fax,
     :filter, :firstname, :lastname, :order_id, :organisation, :phone_business,
     :phone_mobile, :phone_private, :query, :reference, :sortvalue ]
@@ -27,8 +29,7 @@ class Validator < SBSM::Validator
     return nil if(value.empty?)
     match = /\d{13}/.match(value.to_s)
     unless match
-      raise SBSM::InvalidDataError.new(:e_invalid_ean13, 
-        :customer_ean13, value) 
+      raise SBSM::InvalidDataError.new(:e_invalid_ean13, :ean13, value) 
     end
     values = match[0].split("")
     check = values.pop

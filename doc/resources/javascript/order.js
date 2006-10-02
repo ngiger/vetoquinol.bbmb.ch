@@ -57,7 +57,7 @@ function zeroise(form)
 {
   for(name in form.elements) { 
     var node = form[name];
-    if(typeof(node) == 'object' && node.tagName == 'INPUT' && node.type == 'text') {
+    if(node && typeof(node) == 'object' && node.tagName == 'INPUT' && node.type == 'text') {
       node.value = '0'; 
     }
 

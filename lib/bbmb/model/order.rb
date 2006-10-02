@@ -67,6 +67,7 @@ class Order
   end
   def clear
     @positions.clear
+    @unavailable.clear
   end
   def commit!(commit_id, commit_time)
     raise "can't commit empty order" if(empty?)
@@ -82,7 +83,7 @@ class Order
     @positions.empty?
   end
   def filename
-    sprintf("%s-%s.dat", order_id, @commit_time.strftime('%Y%m%d%H%M%S'))
+    sprintf("%s-%s.log", order_id, @commit_time.strftime('%Y%m%d%H%M%S'))
   end
   def increment(quantity, product)
     if(pos = position(product))

@@ -59,6 +59,15 @@ module Customer
     _customer.current_order.clear
     self
   end
+  def delete_unavailable
+    if(@model.respond_to?(:unavailable) && (ids = user_input(:quantity)))
+      ids.each { |id, qty|
+        @model.unavailable.delete_at(id.to_i)
+      }
+      BBMB.persistence.save(@model)
+    end
+    self
+  end
   def favorite_product
     if(_update_order(_customer.favorites))
       trigger(:favorites)
@@ -82,6 +91,40 @@ module Customer
     if(_update_order(_customer.current_order))
       trigger(:current_order)
     end
+  end
+  def scan
+    success = false
+    if(port = user_input(:comport))
+      @session.set_cookie_input(:comport, port)
+    end
+    if(@model.is_a?(Model::Order))
+      user_input(:EAN_13).each { |key, quantity|
+        success = true
+        if(product = Model::Product.find_by_ean13(key))
+          @model.increment(quantity.to_i, product)
+        else
+          info = Model::Order::Info.new
+          info.ean13 = key
+          info.quantity = quantity
+          @model.unavailable.push(info)
+        end
+      }
+      BBMB.persistence.save(@model)
+    end
+    State::Json.new(@session, {:success => success})
+  end
+  def transfer
+    if(@model.is_a?(Model::Order) && (io = user_input(:file_chooser)))
+      BBMB::Util::TransferDat.parse(io) { |info|
+        if(product = Model::Product.find_by_pcode(info.pcode) \
+           || Model::Product.find_by_ean13(info.ean13))
+          @model.increment(info.quantity, product)
+        else
+          @model.unavailable.push(info)
+        end
+      }
+    end
+    self
   end
   def zone_navigation
     [ :current_order, :orders, :favorites ]

@@ -93,7 +93,7 @@ end
 class OrderComposite < HtmlGrid::DivComposite
   COMPONENTS = {
     [0,0] => Positions,
-    [1,0] => AdditionalInformation,
+    [0,1] => AdditionalInformation,
   }
 end
 class Order < Template

@@ -36,15 +36,24 @@ module ActiveX
     html << super
   end
 end
-class BarcodeReader < HtmlGrid::DivForm
-  EVENT = "scan"
-  COMPONENTS = {
-    [0,0]  =>  :barcode_usb,
-    [0,1]  =>  :barcode_reader,
-    [0,2]  =>  :barcode_comport,
-  }
+module UnavailableMethods
+  def unavailables(model) 
+    unavailable = model.unavailable
+    unless unavailable.empty?
+      Unavailables.new(unavailable, @session, self) 
+    end
+  end
+end
+class BarcodeReader < HtmlGrid::Span
+  include HtmlGrid::FormMethods
+  EVENT = 'scan'
+  FORM_ID = 'bcread'
   FORM_NAME = 'bcread'
-  # TODO: store comport in Cookie - make the value machine-bound!
+  def init
+    super
+    @value = [ barcode_usb(@model), barcode_reader(@model), 
+               barcode_comport(@model) ]
+  end
   def barcode_usb(model)
     if(!@session.client_nt5?)
       link = HtmlGrid::Link.new(:barcode_usb, model, @session, self)
@@ -56,11 +65,8 @@ class BarcodeReader < HtmlGrid::DivForm
   def barcode_reader(model)
     button = HtmlGrid::Button.new(:barcode_button, model, @session, self)
     args = [
-      @lookandfeel.lookup(:barcode_wait),
       @lookandfeel.lookup(:barcode_none),
       @lookandfeel.lookup(:barcode_empty),
-      @session.language,
-      @session.flavor,
     ]
     com = 'this.form.barcode_comport'
     argstr = args.join("', '")
@@ -70,7 +76,7 @@ class BarcodeReader < HtmlGrid::DivForm
   def barcode_comport(model)
     input = HtmlGrid::Input.new(:barcode_comport, model, @session, self)
     input.set_attribute('type', 'hidden')
-    val = @session.get_cookie_input('comport')
+    val = @session.get_cookie_input(:comport)
     if(!/[0-9]+/.match(val)) 
       val = "-1"
     end
@@ -197,6 +203,7 @@ class TransferDat < HtmlGrid::Span
   include HtmlGrid::FormMethods
   EVENT = :transfer
   FORM_ID = 'transfer-dat'
+  FORM_NAME = 'transfer_dat'
   TAG_METHOD = :multipart_form
   def init
     super
@@ -279,19 +286,53 @@ class CurrentOrderForm < HtmlGrid::DivForm
     span
   end
 end
+class Unavailables < HtmlGrid::List
+  BACKGROUND_ROW = 'bg'
+  BACKGROUND_SUFFIX = ''
+  CSS_CLASS = 'list'
+  COMPONENTS = {
+    [0,0]  =>  :delete_position,
+    [1,0]  =>  :quantity,
+    [2,0]  =>  :description,
+  }
+  CSS_MAP = {
+    [0,0] => 'delete',
+    [1,0] => 'tiny right',
+    [2,0] => 'description',
+    [3,0] => 'right',
+  }
+  SORT_DEFAULT = nil
+  OMIT_HEADER = true
+  def delete_position(model)
+    link = HtmlGrid::Link.new(:delete, model, @session, self)
+    url = @lookandfeel.base_url
+    id = @list_index
+    event = 'delete_unavailable'
+    link.href = "javascript:delete_position('#{url}', '#{event}', '#{id}');"
+    link
+  end
+  def description(model)
+    span = HtmlGrid::Span.new(model, @session, self)
+    span.value = @lookandfeel.lookup(:unavailable, model.description, 
+                                     model.ean13, model.pcode)
+    span
+  end
+end
 class CurrentOrderComposite < HtmlGrid::DivComposite
+  include UnavailableMethods
   COMPONENTS = {
     [0,0] => Search,
-    [1,0] => :barcode_reader,
-    [2,0] => :position_count,
+    [1,0] => :position_count,
+    [2,0] => :barcode_reader,
     [3,0] => TransferDat,
     [4,0] => :clear_order,
     [0,1] => CurrentPositions,
+    [0,2] => :unavailables,
   }
   CSS_ID_MAP = [ 'toolbar' ]
   def init
     unless(@model.empty?)
-      components.store([0,2], CurrentOrderForm)
+      components.store([1,2], CurrentOrderForm)
     end
     super
   end

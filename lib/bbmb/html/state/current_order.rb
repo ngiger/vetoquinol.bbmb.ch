@@ -54,19 +54,6 @@ class CurrentOrder < Global
       BBMB.persistence.save(@model)
     end
   end
-  def transfer
-    if(io = user_input(:file_chooser))
-      order = _customer.current_order
-      TransferDat.parse(io) { |info|
-        if(product = Model::Product.find_by_pcode(info.pcode) \
-           || Model::Product.find_by_ean13(info.ean13))
-          order.increment(info.quantity, product)
-        else
-          order.unavailable.push(info)
-        end
-      }
-    end
-  end
 end
     end
   end

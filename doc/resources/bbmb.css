@@ -94,7 +94,7 @@ div#toolbar {
 form {
   margin: 0px;
 }
-form#clear, form#transfer-dat {
+form#clear, form#transfer-dat, form#bcread {
   display: inline;
 }
 input[type=text], input[type=password] {

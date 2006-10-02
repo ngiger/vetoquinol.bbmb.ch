@@ -43,6 +43,12 @@ class Session < SBSM::Session
       super
     end
   end
+  if(BBMB.config.debug)
+    def process(*args)
+      super
+      BBMB.logger.debug('event') { event }
+    end
+  end
 end
     end
   end

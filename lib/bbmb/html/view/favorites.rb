@@ -13,10 +13,8 @@ end
 class SearchFavorites < Search
   EVENT = :search_favorites
 end
-class FavoritesPositions < HtmlGrid::FormList
-  include ListPrices
+class FavoritesPositions < Positions
   include PositionMethods
-  CSS_CLASS = 'list'
   CSS_ID = 'favorites'
   COMPONENTS = {
     [0,0]  =>  :delete_position,
@@ -44,25 +42,11 @@ class FavoritesPositions < HtmlGrid::FormList
     [4,0] => 'right',
     [7,0] => 'right',
   }
-  EVENT = :increment_order
-  FORM_NAME = 'favorites'
-  def compose_footer(matrix)
-    unless(@model.empty?)
-      @grid.add([nullify(model), reset(model)], *matrix)
-      @grid.set_row_attributes({'id' => 'controls'}, matrix.at(1))
-      super
-    end
-  end
   def delete_position(model)
     super(model, :favorite_product)
   end
   def description(model)
     position_modifier(model, :description, :search_favorites)
-  end
-  def nullify(model)
-    button = HtmlGrid::Button.new(:nullify, model, @session, self)
-    button.set_attribute('onClick', "zeroise(this.form);")
-    button
   end
   def quantity(model)
     name = "quantity[#{model.article_number}]"
@@ -74,6 +58,23 @@ class FavoritesPositions < HtmlGrid::FormList
     script = "if(this.value == '') this.value = '0';"
     input.set_attribute('onBlur', script)
     input
+  end
+end
+class FavoritesForm < HtmlGrid::DivForm
+  include UnavailableMethods
+  COMPONENTS = {
+    [0,0] => FavoritesPositions,
+    [0,1] => :unavailables,
+    [1,1] => :submit,
+    [2,1] => :nullify,
+    [3,1] => :reset,
+  }
+  EVENT = :increment_order
+  FORM_NAME = 'favorites'
+  def nullify(model)
+    button = HtmlGrid::Button.new(:nullify, model, @session, self)
+    button.set_attribute('onClick', "zeroise(this.form);")
+    button
   end
   def reset(model)
     input = HtmlGrid::Button.new(:default_values, model, @session, self)
@@ -88,7 +89,7 @@ class FavoritesComposite < OrderComposite
     [2,0] => :position_count,
     [3,0] => TransferDat,
     [4,0] => :clear_favorites,
-    [0,1] => FavoritesPositions,
+    [0,1] => FavoritesForm,
   }
   CSS_ID_MAP = [ 'toolbar' ]
   def barcode_reader(model)
@@ -109,7 +110,18 @@ class FavoritesComposite < OrderComposite
   end
 end
 class Favorites < CurrentOrder
+  include HtmlGrid::DojoToolkit::DojoTemplate
+  include ActiveX
   CONTENT = FavoritesComposite
+  DOJO_DEBUG = BBMB.config.debug
+  DOJO_PREFIX = {
+    'ywesee' => '../javascript',
+  }
+  JAVASCRIPTS = [
+    "bcreader",
+    "order",
+  ]
+
 end
     end
   end
