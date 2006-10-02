@@ -21,7 +21,7 @@ class Order
       @product = product
     end
     def commit!
-      @product = @product.dup
+      @product = @product.to_info
     end
     def method_missing(name, *args, &block)
       @product.send(name, *args, &block)
@@ -83,7 +83,7 @@ class Order
     @positions.empty?
   end
   def filename
-    sprintf("%s-%s.log", order_id, @commit_time.strftime('%Y%m%d%H%M%S'))
+    sprintf("%s-%s.txt", order_id, @commit_time.strftime('%Y%m%d%H%M%S'))
   end
   def increment(quantity, product)
     if(pos = position(product))
