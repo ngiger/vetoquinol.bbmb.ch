@@ -20,7 +20,7 @@ class Customer
   end
   def commit_order!(commit_time = Time.now)
     Thread.exclusive {
-      id = @archive.keys.collect { |id| id.to_i }.max.next.to_s
+      id = @archive.keys.max.to_i.next
       order = current_order
       order.commit!(id, commit_time)
       @archive.store(id, order)
@@ -43,7 +43,7 @@ class Customer
     @favorites ||= Order.new(self)
   end
   def order(commit_id)
-    @archive[commit_id]
+    @archive[commit_id.to_i]
   end
   def orders
     @archive.values
