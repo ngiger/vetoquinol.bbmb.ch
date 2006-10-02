@@ -10,13 +10,15 @@ module BBMB
 module Mail
   def Mail.send_order(order)
     message = RMail::Message.new
+    txt = RMail::Message.new
+    txt.body = order.filename
+    message.add_part(txt)
     attachment = RMail::Message.new
     attachment.body = order.to_i2
     header = attachment.header
     header.add('Content-Type', 'text/plain', nil, 'charset' => 'utf-8')
     header.add('Content-Disposition', 'attachment', nil, 
                'filename' => order.filename)
-    header.add('Content-Transfer-Encoding', '8bit')
     message.add_part(attachment)
     config = BBMB.config
     header = message.header
