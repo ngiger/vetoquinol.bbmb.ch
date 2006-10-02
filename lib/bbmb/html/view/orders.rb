@@ -34,6 +34,7 @@ class OrdersComposite < HtmlGrid::List
     link = HtmlGrid::Link.new(:commit_time, model, @session, self)
     link.value = model.commit_time.strftime("%d.%m.%Y %H:%M")
     link.href = @lookandfeel._event_url(:order, :order_id => model.order_id)
+    link.css_class = 'commit-time'
     link
   end
   def items(model)

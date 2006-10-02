@@ -226,6 +226,7 @@ class CurrentPositions < HtmlGrid::List
   CSS_MAP = {
     [0,0]     => 'delete',
     [1,0]     => 'tiny right',
+    [2,0] => 'description',
     [3,0,4,2] => 'right',
     [7,0]     => 'total',
   }

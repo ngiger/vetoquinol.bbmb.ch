@@ -16,7 +16,7 @@ a, a:visited {
 a:hover {
   color: #00A46D;
 }
-a[name=description], a[name=commit_time], td.description {
+td.description, a.commit-time {
   font-size: 14px;
   font-weight: bold;
 }
@@ -100,10 +100,10 @@ form#clear, form#transfer-dat {
 input[type=text], input[type=password] {
   width: 200px;
 }
-input[name=city] {
+input#city {
   width: 148px;
 }
-input[name=plz], input.tiny, td.tiny {
+input#plz, input.tiny, td.tiny, td.tiny input {
   width: 49px;
 }
 label {

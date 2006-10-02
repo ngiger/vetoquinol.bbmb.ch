@@ -42,6 +42,10 @@ class CustomerForm < HtmlGrid::Form
     [2,12]  =>  :confirm_pass,
     [1,13]  =>  :submit,
   }
+  COMPONENT_CSS_MAP = {
+    [0,8,0] => 'tiny',
+    [0,8,2] => 'city',
+  }
   CSS_MAP = {
     [0,2,4] => 'contact',
   }
