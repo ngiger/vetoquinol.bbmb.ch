@@ -8,6 +8,12 @@ module BBMB
 class Order
   class Position
     include ODBA::Persistable
+		alias :__old_commit__ :commit!
+		def commit!(*args)
+			res = __old_commit__(*args)
+			odba_store
+			res
+		end  
   end
   include ODBA::Persistable
   ODBA_SERIALIZABLE = ['@unavailable']
