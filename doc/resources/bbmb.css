@@ -72,7 +72,7 @@ div#navigation a:hover {
 }
 div#order-total, td.order-total {
   font-weight: bold;
-  padding: 8px;
+  padding: 8px 4px 8px 8px;
 	background-color: #EAEDEF;
   border-top: 1px solid #BBB;
 }
@@ -154,7 +154,7 @@ td.processingerror {
   color: red;
   font-weight: bold;
 }
-td.right, th.right, td.total {
+td.right, th.right, td.total, div.right {
   text-align: right;
 }
 td.total {

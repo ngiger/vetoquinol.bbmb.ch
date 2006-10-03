@@ -4,6 +4,7 @@
 require 'bbmb/html/state/customer'
 require 'bbmb/html/state/customers'
 require 'bbmb/html/state/orders'
+require 'bbmb/html/state/history'
 require 'sbsm/viralstate'
 
 module BBMB
@@ -15,6 +16,7 @@ module Admin
   EVENT_MAP = {
     :customers	=>	State::Customers,
     :customer   =>  State::Customer,
+    :history    =>  State::History,
     :orders     =>  State::Orders,
   }
   def _customer(customer_id = @session.user_input(:customer_id))

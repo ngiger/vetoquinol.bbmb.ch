@@ -26,8 +26,11 @@ class Order
     def method_missing(name, *args, &block)
       @product.send(name, *args, &block)
     end
+    def price
+      @product.price(@quantity)
+    end
     def total
-      @product.price(@quantity) * @quantity
+      price * @quantity
     end
     def respond_to?(name)
       super || @product.respond_to?(name)

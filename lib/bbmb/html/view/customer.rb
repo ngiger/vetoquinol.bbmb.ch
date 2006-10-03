@@ -15,8 +15,9 @@ class CustomerForm < HtmlGrid::Form
     [0,0]   =>  :organisation,
     [2,0]   =>  :customer_id,
     [0,1]   =>  :ean13,
-    [2,1]   =>  :turnaround,
-    #[3,1]   =>  :history, 
+    [2,1,0] =>  :turnaround,
+    [3,1,0] =>  ' - ', 
+    [3,1,1] =>  :history, 
     [0,2]   =>  'contact',
     [0,3]   =>  :title,
     [2,3]   =>  :drtitle,
@@ -42,8 +43,8 @@ class CustomerForm < HtmlGrid::Form
     [2,12]  =>  :confirm_pass,
     [1,13]  =>  :submit,
   }
-  COMPONENT_CSS_MAP = {
-    [0,8,0] => 'tiny',
+  CSS_ID_MAP = {
+    [0,8,0] => 'plz',
     [0,8,2] => 'city',
   }
   CSS_MAP = {
@@ -74,6 +75,12 @@ class CustomerForm < HtmlGrid::Form
   end
   def confirm_pass(model)
     _pass(:confirm_pass, model)
+  end
+  def history(model)
+    link = HtmlGrid::Link.new(:history, model, @session, self)
+    link.href = @lookandfeel._event_url(:history, 
+                                        :customer_id => model.customer_id)
+    link
   end
   def pass(model)
     _pass(:pass, model)
