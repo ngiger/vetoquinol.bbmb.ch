@@ -11,7 +11,9 @@ class FavoritesResult < Result
   VIEW = View::FavoritesResult
   def init
     products = Model::Product.search_by_description(@session.user_input(:query))
-    @model = Result::Result.new(_customer.favorites, products)
+    @model = Result::Result.new _customer.favorites, products.select { |product|
+			product.price
+		}
   end
   def direct_event
     [:search_favorites, {:query => @session.persistent_user_input(:query)}]

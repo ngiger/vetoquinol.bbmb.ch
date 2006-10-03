@@ -40,7 +40,9 @@ class Result < Global
   VIEW = View::Result
   def init
     products = Model::Product.search_by_description(@session.user_input(:query))
-    @model = Result.new(_customer.current_order, products)
+    @model = Result.new _customer.current_order, products.select { |product|
+			product.price
+		}
   end
   def direct_event
     [:search, {:query => @session.persistent_user_input(:query)}]
