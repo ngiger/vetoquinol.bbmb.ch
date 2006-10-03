@@ -66,7 +66,7 @@ class Positions < HtmlGrid::List
     [0,0]  =>  :quantity,
     [1,0]  =>  :description,
     [2,0]  =>  :price,
-    [3,0]  =>  :price1,
+    [3,0]  =>  :price_levels,
     [4,0]  =>  :price2,
     [5,0]  =>  :price3,
     [3,1]  =>  :price4,

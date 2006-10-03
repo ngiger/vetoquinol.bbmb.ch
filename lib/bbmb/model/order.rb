@@ -91,6 +91,9 @@ class Order
     end
     add(quantity, product)
   end
+  def item_count
+    @positions.inject(0) { |memo, pos| memo + pos.quantity }
+  end
   def i2_body
     lines = []
     @positions.each_with_index { |position, idx|
@@ -141,8 +144,14 @@ class Order
       0
     end
   end
+  def reverse!
+    @positions.reverse!
+  end
   def size
     @positions.size
+  end
+  def sort!(*args, &block)
+    @positions.sort!(*args, &block)
   end
   def total
     @positions.inject(@shipping) { |memo, pos| pos.total + memo }

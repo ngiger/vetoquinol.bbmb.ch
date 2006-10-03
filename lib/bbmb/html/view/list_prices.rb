@@ -34,6 +34,9 @@ module ListPrices
   def price6(model)
     pricex(model, 6)
   end
+  def price_levels(model)
+    price1(model)
+  end
 end
     end
   end

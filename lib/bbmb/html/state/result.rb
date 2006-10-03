@@ -23,12 +23,18 @@ class Result < Global
     def ordered_quantity(article_number)
       @order.quantity(article_number)
     end
+    def reverse!
+      @products.reverse!
+    end
     def size
       @products.size
     end
     def sort_by(&block)
       @products = @products.sort_by(&block)
       self
+    end
+    def sort!(*args, &block)
+      @products.sort!(*args, &block)
     end
   end
   VIEW = View::Result

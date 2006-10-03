@@ -30,6 +30,10 @@ class ProductInfo
       res || Util::Money.new(0)
     end 
   end
+  def price_levels
+    [@l1_qty, @l1_price, @l2_qty, @l2_price, @l3_qty, @l3_price, @l4_qty, 
+      @l4_price, @l5_qty, @l5_price, @l6_qty, @l6_price].compact
+  end
   def ==(other)
     other.is_a?(ProductInfo) && @article_number == other.article_number
   end

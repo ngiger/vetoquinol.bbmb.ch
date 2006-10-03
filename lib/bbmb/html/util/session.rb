@@ -45,8 +45,9 @@ class Session < SBSM::Session
   end
   if(BBMB.config.debug)
     def process(*args)
-      super
+      res = super
       BBMB.logger.debug('event') { event }
+      res
     end
   end
 end

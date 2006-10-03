@@ -222,7 +222,7 @@ class CurrentPositions < HtmlGrid::List
     [1,0]  =>  :quantity,
     [2,0]  =>  :description,
     [3,0]  =>  :price,
-    [4,0]  =>  :price1,
+    [4,0]  =>  :price_levels,
     [5,0]  =>  :price2,
     [6,0]  =>  :price3,
     [4,1]  =>  :price4,

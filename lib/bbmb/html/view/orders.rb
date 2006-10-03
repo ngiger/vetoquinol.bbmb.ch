@@ -13,7 +13,7 @@ class OrdersComposite < HtmlGrid::List
     #[0,0] => :order_id,
     [0,0] => :commit_time,
     [1,0] => :size,
-    [2,0] => :items,
+    [2,0] => :item_count,
     [3,0] => :total,
   }
   CSS_CLASS = 'list'
@@ -29,7 +29,8 @@ class OrdersComposite < HtmlGrid::List
   LOOKANDFEEL_MAP = {
     :total => :order_total,
   }
-  SORT_DEFAULT = nil
+  SORT_DEFAULT = :commit_time
+  SORT_REVERSE = true
   def commit_time(model)
     link = HtmlGrid::Link.new(:commit_time, model, @session, self)
     link.value = model.commit_time.strftime("%d.%m.%Y %H:%M")
