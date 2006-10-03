@@ -77,7 +77,7 @@ class V1Importer
     id = @products[anum]
     BBMB.logger.debug('v1importer') { 
       sprintf "importing archive-position %s -> %s", anum, id }
-    product = Model::Product.new(id || anum)
+    product = Model::ProductInfo.new(id || anum)
     { :article_status => :status, 
       :article_ean13  => :ean13,
       :article_descr  => :description,
