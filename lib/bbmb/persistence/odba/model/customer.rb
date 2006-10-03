@@ -23,7 +23,6 @@ module BBMB
       def commit_order!(*args)
         order = __old_commit_order__(*args)
         @archive.odba_store
-        order.odba_store
         odba_store
         order
       end

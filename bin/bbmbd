@@ -37,11 +37,15 @@ module BBMB
     if(@config.update?)
       @server.run_updater
     end
+    if(@config.invoice?)
+      @server.run_invoicer
+    end
 
     url = @config.server_url
     url.untaint
     DRb.start_service(url, @server)
     $SAFE = 1
+    $0 = @config.name
     @logger.info('start') { 
       sprintf("starting bbmb-server on %s", url) }
     DRb.thread.join

@@ -5,6 +5,8 @@ require 'bbmb/config'
 require 'bbmb/html/util/known_user'
 require 'bbmb/html/util/session'
 require 'bbmb/html/util/validator'
+require 'bbmb/util/invoicer'
+require 'bbmb/util/mail'
 require 'bbmb/util/updater'
 require 'date'
 require 'sbsm/drbserver'
@@ -16,6 +18,11 @@ module BBMB
 	    SESSION = Html::Util::Session
 	    VALIDATOR = Html::Util::Validator
       attr_reader :updater
+      def invoice(range)
+        Invoicer.run(range)
+      rescue Exception => e
+        Mail.notify_error(e)
+      end
       def login(email, pass)
         session = BBMB.auth.login(email, pass, BBMB.config.auth_domain)
         Html::Util::KnownUser.new(session)
@@ -32,6 +39,23 @@ module BBMB
           else
             session.rename(old, new)
           end
+        }
+      end
+      def run_invoicer
+        @invoicer = Thread.new {
+          loop {
+            today = Date.today
+            day = today >> 1
+            start = Time.local(today.year, today.month)
+            now = Time.now
+            at = Time.local(day.year, day.month)
+            secs = at - now
+            BBMB.logger.debug("invoicer") { 
+              "sleeping %.2f seconds" % secs
+            }
+            sleep(secs)
+            invoice(start...at)
+          }
         }
       end
       def run_updater
@@ -56,10 +80,7 @@ module BBMB
       def update
         Updater.run
       rescue Exception => e
-        puts e.class
-        puts e.message
-        puts e.backtrace
-        # TODO ensure that we are notified by email
+        Mail.notify_error(e)
       end
     end
   end
