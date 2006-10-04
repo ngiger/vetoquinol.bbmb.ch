@@ -39,21 +39,10 @@ module Mail
                                      from.tr('@', '.')))
     header.add('Mime-Version', '1.0')
     header.add('User-Agent', BBMB.config.name)
-    txt = RMail::Message.new
-    txt.body = order.filename << "\n"
-    header = txt.header
     header.add('Content-Type', 'text/plain', nil, 'charset' => 'utf-8')
     header.add('Content-Disposition', 'inline')
-    header.add('Content-Transfer-Encoding', '8bit')
-    message.add_part(txt)
-    attachment = RMail::Message.new
-    attachment.body = order.to_i2
-    header = attachment.header
-    header.add('Content-Type', 'text/plain', nil, 'charset' => 'utf-8')
-    header.add('Content-Disposition', 'attachment', nil, 
-               'filename' => order.filename)
-    header.add('Content-Transfer-Encoding', '8bit')
-    message.add_part(attachment)
+    message.body = order.to_i2
+
     Mail.sendmail(message, from, to, cc)
   end
 end
