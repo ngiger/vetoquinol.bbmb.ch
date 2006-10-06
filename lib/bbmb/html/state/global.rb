@@ -11,16 +11,37 @@ module BBMB
 class Global < SBSM::State
   class << self
     def mandatory(*keys)
-      define_method(:mandatory) { keys }
-      define_method(:mandatory?) { |key| keys.include?(key) }
+      define_method(:_mandatory) { keys }
+      define_method(:mandatory) { _mandatory }
+      define_method(:mandatory?) { |key| mandatory.include?(key) }
     end
   end
   def logout
     @session.logout
     State::Login.new(@session, nil)
   end
+  def direct_arguments
+    if(keys = direct_argument_keys)
+      keys.inject({}) { |memo, key|
+        memo.store(key, @session.user_input(key))
+        memo
+      }
+    end
+  end
+  def direct_argument_keys
+  end
+  def direct_request?(event)
+    requested_event(event) == direct_event
+  end
+  def requested_event(event)
+    if(args = direct_arguments)
+      [ event, args ]
+    else
+      event
+    end
+  end
   def trigger(event)
-    if(event == direct_event)
+    if(direct_request?(event))
       self
     else
       super

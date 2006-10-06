@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 # Html::View::CurrentOrder -- bbmb.ch -- 20.09.2006 -- hwyss@ywesee.com
 
+require 'bbmb/html/view/backorder'
 require 'bbmb/html/view/list_prices'
 require 'bbmb/html/view/order'
 require 'bbmb/html/view/search'
@@ -12,6 +13,7 @@ require 'htmlgrid/inputradio'
 require 'htmlgrid/inputtext'
 require 'htmlgrid/javascript'
 require 'htmlgrid/span'
+require 'htmlgrid/spancomposite'
 require 'htmlgrid/textarea'
 
 module BBMB
@@ -44,16 +46,16 @@ module UnavailableMethods
     end
   end
 end
-class BarcodeReader < HtmlGrid::Span
+class BarcodeReader < HtmlGrid::SpanComposite
   include HtmlGrid::FormMethods
+  COMPONENTS = {
+    [0,0] => :barcode_usb,
+    [1,0] => :barcode_reader,
+    [2,0] => :barcode_comport,
+  }
   EVENT = 'scan'
   FORM_ID = 'bcread'
   FORM_NAME = 'bcread'
-  def init
-    super
-    @value = [ barcode_usb(@model), barcode_reader(@model), 
-               barcode_comport(@model) ]
-  end
   def barcode_usb(model)
     if(!@session.client_nt5?)
       link = HtmlGrid::Link.new(:barcode_usb, model, @session, self)
@@ -84,17 +86,19 @@ class BarcodeReader < HtmlGrid::Span
     input
   end
 end
-class ClearOrder < HtmlGrid::Span
+class ClearOrder < HtmlGrid::SpanComposite
   include HtmlGrid::FormMethods
   FORM_ID = 'clear'
   EVENT = :clear_order
-  def init
-    super
+  COMPONENTS = {
+    [0,0] => :clear,
+  }
+  def clear(model)
     button = HtmlGrid::Button.new(event, model, @session, self)
     condition = "if(confirm('#{@lookandfeel.lookup(event.to_s << "_confirm")}'))"
     condition << "this.form.submit();"
     button.set_attribute('onclick', condition)
-    @value = button
+    button
   end
 end
 class CurrentAdditionalInformation < HtmlGrid::Composite
@@ -168,9 +172,6 @@ class CurrentPriorities < HtmlGrid::Composite
     radio.set_attribute('onclick', script)
     radio
   end
-  def priority_value(model)
-    @lookandfeel.lookup("priority_#{model.priority}")
-  end
   def priority_0(model)
     priority_input(model, '')
   end
@@ -199,21 +200,29 @@ class CurrentToggleable < HtmlGrid::Composite
     [1,0] => CurrentPriorities,
   }
 end
-class TransferDat < HtmlGrid::Span
+class TransferDat < HtmlGrid::SpanComposite
   include HtmlGrid::FormMethods
+  COMPONENTS = {
+    [0,0] => :file_chooser,
+    [1,0] => :submit,
+  }
   EVENT = :transfer
   FORM_ID = 'transfer-dat'
   FORM_NAME = 'transfer_dat'
+  SYMBOL_MAP = {
+    :file_chooser => HtmlGrid::InputFile, 
+  }
   TAG_METHOD = :multipart_form
-  def init
-    super
-    @value = [
-      HtmlGrid::InputFile.new(:file_chooser, @model, @session, self),
-      HtmlGrid::Submit.new(:order_transfer, @model, @session, self),
-    ]
+  def initialize(event, *args)
+    @event = event
+    super(*args)
+  end
+  def event
+    @event || super
   end
 end
 class CurrentPositions < HtmlGrid::List
+  include Backorder
   include ListPrices
   include PositionMethods
   CSS_CLASS = 'list'
@@ -221,28 +230,30 @@ class CurrentPositions < HtmlGrid::List
     [0,0]  =>  :delete_position,
     [1,0]  =>  :quantity,
     [2,0]  =>  :description,
-    [3,0]  =>  :price,
-    [4,0]  =>  :price_levels,
-    [5,0]  =>  :price2,
-    [6,0]  =>  :price3,
-    [4,1]  =>  :price4,
-    [5,1]  =>  :price5,
-    [6,1]  =>  :price6,
-    [7,0]  =>  :total,
+    [3,0]  =>  :backorder,
+    [4,0]  =>  :price,
+    [5,0]  =>  :price_levels,
+    [6,0]  =>  :price2,
+    [7,0]  =>  :price3,
+    [5,1]  =>  :price4,
+    [6,1]  =>  :price5,
+    [7,1]  =>  :price6,
+    [8,0]  =>  :total,
   }
   CSS_MAP = {
     [0,0]     => 'delete',
     [1,0]     => 'tiny right',
     [2,0]     => 'description',
-    [3,0,4,2] => 'right',
-    [7,0]     => 'total',
+    [4,0,4,2] => 'right',
+    [8,0]     => 'total',
   }
   CSS_HEAD_MAP = {
     [1,0] => 'right',
-    [3,0] => 'right',
     [4,0] => 'right',
-    [7,0] => 'right',
+    [5,0] => 'right',
+    [8,0] => 'right',
   }
+  SORT_DEFAULT = :description
   def delete_position(model)
     super(model, :order_product)
   end
@@ -313,8 +324,13 @@ class Unavailables < HtmlGrid::List
   end
   def description(model)
     span = HtmlGrid::Span.new(model, @session, self)
-    span.value = @lookandfeel.lookup(:unavailable, model.description, 
-                                     model.ean13, model.pcode)
+    parts = [model.description].compact
+    [:ean13, :pcode].each { |key|
+      if(value = model.send(key))
+        parts.push(sprintf("%s: %s", @lookandfeel.lookup(key), value))
+      end
+    }
+    span.value = @lookandfeel.lookup(:unavailable, parts.join(', '))
     span
   end
 end
@@ -324,12 +340,15 @@ class CurrentOrderComposite < HtmlGrid::DivComposite
     [0,0] => Search,
     [1,0] => :position_count,
     [2,0] => :barcode_reader,
-    [3,0] => TransferDat,
+    [3,0] => :order_transfer,
     [4,0] => :clear_order,
     [0,1] => CurrentPositions,
     [0,2] => :unavailables,
   }
   CSS_ID_MAP = [ 'toolbar' ]
+  SYMBOL_MAP = {
+    :order_transfer => TransferDat,
+  }
   def init
     unless(@model.empty?)
       components.store([1,2], CurrentOrderForm)

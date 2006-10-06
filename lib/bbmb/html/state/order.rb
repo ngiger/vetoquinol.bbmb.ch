@@ -9,6 +9,12 @@ module BBMB
     module State
 class Order < Global
   VIEW = View::Order
+  def direct_argument_keys
+    [:order_id]
+  end
+  def direct_event
+    [:order, {:order_id => @model.order_id}]
+  end
 end
     end
   end

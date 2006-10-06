@@ -14,6 +14,8 @@ module BBMB
     class TestUpdater < Test::Unit::TestCase
       include FlexMock::TestCase
       def test_import_customers
+        BBMB.logger = flexmock("logger")
+        BBMB.logger.should_ignore_missing
         persistence = flexmock("persistence")
         flexstub(CustomerImporter).should_receive(:new).times(1).and_return { 
           importer = flexmock('importer')
@@ -25,6 +27,8 @@ module BBMB
         Updater.import_customers("data")
       end
       def test_import_products
+        BBMB.logger = flexmock("logger")
+        BBMB.logger.should_ignore_missing
         persistence = flexmock("persistence")
         flexstub(ProductImporter).should_receive(:new).times(1).and_return { 
           importer = flexmock('importer')

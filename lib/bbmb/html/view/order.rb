@@ -75,9 +75,6 @@ class Positions < HtmlGrid::List
     [6,0]  =>  :total,
   }
   CSS_MAP = {
-    [1,0] => 'description',
-  }
-  CSS_MAP = {
     [0,0]     => 'tiny right',
     [1,0]     => 'description',
     [2,0,4,2] => 'right',

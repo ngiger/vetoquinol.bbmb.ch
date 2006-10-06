@@ -58,16 +58,18 @@ class TestProduct < Test::Unit::TestCase
   end
   def test_price
     assert_equal(nil, @product.price)
-    @product.l1_price = 12.50
+    assert_equal(0, @product.price(1))
+    @product.l1_price = 11.50
+    assert_equal(nil, @product.price)
+    assert_equal(11.50, @product.price(1))
+    @product.price = 12.50
     assert_equal(12.50, @product.price)
-    @product.price = 11.50
-    assert_equal(11.50, @product.price)
     @product.l1_qty = 1
-    assert_equal(12.50, @product.price(1))
+    assert_equal(11.50, @product.price(1))
     @product.l1_qty = 2
     assert_equal(12.50, @product.price(1))
     @product.l2_qty = 3
-    assert_equal(12.50, @product.price(3))
+    assert_equal(11.50, @product.price(3))
     @product.l2_price = 13.50
     assert_equal(13.50, @product.price(3))
     @product.l3_qty = 4
@@ -79,6 +81,13 @@ class TestProduct < Test::Unit::TestCase
     @product.l6_qty = 6
     @product.l6_price = 16.50
     assert_equal(16.50, @product.price(6))
+  end
+  def test_info
+    info = @product.to_info
+    assert_instance_of(ProductInfo, info)
+    assert_equal('article_number', info.article_number)
+    info1 = info.to_info
+    assert_equal(info, info1)
   end
 end
   end

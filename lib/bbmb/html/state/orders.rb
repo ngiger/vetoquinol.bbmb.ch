@@ -8,6 +8,7 @@ module BBMB
   module Html
     module State
 class Orders < Global
+  DIRECT_EVENT = :orders
   VIEW = View::Orders
   def init
     @model = _customer.orders

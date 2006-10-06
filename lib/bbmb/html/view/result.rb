@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 # Html::View::Result -- bbmb.ch -- 21.09.2006 -- hwyss@ywesee.com
 
+require 'bbmb/html/view/backorder'
 require 'bbmb/html/view/list_prices'
 require 'bbmb/html/view/search'
 require 'bbmb/html/view/template'
@@ -10,27 +11,29 @@ module BBMB
   module Html
     module View
 class Products < HtmlGrid::FormList
+  include Backorder
   include ListPrices
   COMPONENTS = {
     [0,0]	=>	:quantity,
     [1,0]	=>	:description,
-    [2,0] =>  :price,
-    [3,0] =>  :price_levels,
-    [4,0] =>  :price2,
-    [5,0] =>  :price3,
-    [3,1] =>  :price4,
-    [4,1] =>  :price5,
-    [5,1] =>  :price6,
+    [2,0]	=>	:backorder,
+    [3,0] =>  :price,
+    [4,0] =>  :price_levels,
+    [5,0] =>  :price2,
+    [6,0] =>  :price3,
+    [4,1] =>  :price4,
+    [5,1] =>  :price5,
+    [6,1] =>  :price6,
   }
   CSS_CLASS = 'list'
   CSS_HEAD_MAP = {
-    [2,0] => 'right',
     [3,0] => 'right',
+    [4,0] => 'right',
   }
   CSS_MAP = { 
     [0,0]     => 'tiny', 
     [1,0]     => 'description',
-    [2,0,4,2] => 'right'
+    [3,0,4,2] => 'right'
   }
   EVENT = :order_product
   FORM_NAME = 'products'

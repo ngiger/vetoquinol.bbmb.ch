@@ -118,7 +118,7 @@ class TestOrder < Test::Unit::TestCase
     assert_equal(40, @order.total)
   end
   def test_to_i2
-    @customer.should_receive(:customer_id).and_return('CustomerId')
+    @customer.should_receive(:customer_id).and_return(7)
     @customer.should_receive(:organisation).and_return('Organisation')
     position = flexmock('position')
     position.should_receive(:ean13).and_return("EAN13")
@@ -128,17 +128,17 @@ class TestOrder < Test::Unit::TestCase
     @order.positions.push(position)
     @order.reference = "Reference"
     @order.comment = "Comment"
-    @order.commit!('OrderId', Time.local(2006,9,27,9,50,12))
+    @order.commit!('8', Time.local(2006,9,27,9,50,12))
     @order.priority = 41
     expected = <<-EOS
 001:7601001000681
 002:ORDERX
 003:220
-010:CustomerId-OrderId-20060927095012.dat
+010:7-8-20060927095012.txt
 100:YWESEE
 101:Reference
 201:CU
-202:CustomerId
+202:7
 201:BY
 202:1075
 231:Organisation
@@ -146,7 +146,7 @@ class TestOrder < Test::Unit::TestCase
 237:61
 238:41
 250:ADE
-251:CustomerId-OrderId
+251:700008
 300:4
 301:20060927
 500:1
@@ -167,10 +167,10 @@ class TestOrderPosition < Test::Unit::TestCase
     @position = Order::Position.new(3, @product)
   end
   def test_commit
-    duplicate = flexmock('duplicate')
-    @product.should_receive(:dup).and_return(duplicate)
+    info = flexmock('info')
+    @product.should_receive(:to_info).and_return(info)
     @position.commit!
-    assert_equal(duplicate, @position.product)
+    assert_equal(info, @position.product)
   end
   def test_total
     @product.should_receive(:price).with(3).and_return(12)

@@ -13,39 +13,42 @@ class Customer < Global
   def init
     @model = Model::Customer.find_by_customer_id(@session.user_input(:customer_id))
   end
+  def direct_argument_keys
+    [:customer_id]
+  end
   def direct_event
     unless(error? || @session.event == :change_pass)
       [ :customer, {:customer_id => @model.customer_id} ]
     end
   end
+  def mandatory
+    mandatory = _mandatory
+    if(set_pass? || @session.user_input(:pass))
+      mandatory += [:pass, :confirm_pass]
+    end
+    mandatory
+  end
   def update_user(input)
     email = input.delete(:email)
-    begin
-      @model.email = email
-      @model.protect!(:email)
-    rescue Yus::YusError
-      @errors.store(:email, create_error(:e_duplicate_email, :email, email))
-    end
+    @model.email = email
+    @model.protect!(:email)
     if(passhash = input.delete(:confirm_pass))
       begin
         @session.user.grant(email, 'login', 
-                            BBMB.config.auth_domain + '.Customer')
+                          BBMB.config.auth_domain + '.Customer')
         @session.user.set_password(email, passhash)
       rescue Yus::YusError => e 
         @errors.store(:pass, create_error(:e_pass_not_set, :email, email))
       end
     end
+  rescue Yus::YusError
+    @errors.store(:email, create_error(:e_duplicate_email, :email, email))
   end
   def save
-    mandatory_keys = mandatory
-    if(set_pass? || @session.user_input(:pass))
-      mandatory_keys += [:pass, :confirm_pass]
-    end
-    keys = mandatory_keys + [:ean13, :title, :drtitle, :lastname, :firstname,
-                             :address2, :address3, :plz, :city, :canton,
-                             :phone_business, :phone_private, :phone_mobile,
-                             :fax ]
-    input = user_input(keys, mandatory_keys)
+    keys = mandatory + [ :ean13, :title, :drtitle, :lastname, :firstname,
+                         :address2, :address3, :plz, :city, :canton,
+                         :phone_business, :phone_private, :phone_mobile, :fax ]
+    input = user_input(keys, mandatory)
     update_user(input)
     if(error?)
       @errors.store(:error, create_error(:error, :error, nil))

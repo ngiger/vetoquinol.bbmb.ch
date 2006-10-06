@@ -39,13 +39,18 @@ class Result < Global
   end
   VIEW = View::Result
   def init
-    products = Model::Product.search_by_description(@session.user_input(:query))
-    @model = Result.new _customer.current_order, products.select { |product|
-			product.price
-		}
+    @query = @session.persistent_user_input(:query)
+    products = Model::Product.search_by_description(@query)
+    @model = Result.new _order, products.select { |product| product.price }
+  end
+  def direct_argument_keys
+    [:query]
   end
   def direct_event
-    [:search, {:query => @session.persistent_user_input(:query)}]
+    [:search, {:query => @query}]
+  end
+  def _order
+    _customer.current_order
   end
 end
     end

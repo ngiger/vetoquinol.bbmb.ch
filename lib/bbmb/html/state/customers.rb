@@ -37,7 +37,7 @@ class Customers < Global
   def page(model)
     page = OpenStruct.new
     index = @session.user_input(:index).to_i
-    step = @session.user.pagestep || 20
+    step = @session.user.pagestep || BBMB.config.pagestep
     page.index = index
     page.first = index + 1
     page.step = step

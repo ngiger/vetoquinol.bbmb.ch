@@ -3,6 +3,7 @@
 
 require 'bbmb/config'
 require 'bbmb/html/util/lookandfeel'
+require 'bbmb/html/util/known_user'
 require 'bbmb/html/state/login'
 require 'sbsm/session'
 
@@ -28,9 +29,21 @@ class Session < SBSM::Session
   end
   def login
     @user = @app.login(user_input(:email), user_input(:pass))
+    @user.session = self if(@user.respond_to?(:session=))
+    @user
   end
   def logout
     @app.logout(@user.auth_session) if(@user.respond_to?(:auth_session))
+    super
+  end
+  def process(request)
+    begin 
+      if(@user.is_a?(KnownUser) && @user.auth_session.expired?)
+        logout
+      end
+    rescue DRb::DRbError, RangeError
+      logout
+    end
     super
   end
   def redirect?
@@ -41,13 +54,6 @@ class Session < SBSM::Session
       ''
     else
       super
-    end
-  end
-  if(BBMB.config.debug)
-    def process(*args)
-      res = super
-      BBMB.logger.debug('event') { event }
-      res
     end
   end
 end

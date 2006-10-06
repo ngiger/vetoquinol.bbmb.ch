@@ -10,7 +10,7 @@ module BBMB
 class History < Global
   VIEW = View::History
   class PositionFacade
-    attr_reader :quantity, :position_total
+    attr_reader :quantity, :total
     def initialize
       @positions = []
       @quantity = 0
@@ -77,11 +77,17 @@ class History < Global
   end
   def init
     @model = HistoryFacade.new
-    if(customer = _customer)
-      customer.orders.sort_by { |order| order.commit_time }.each { |order|
+    if(@customer = _customer)
+      @customer.orders.sort_by { |order| order.commit_time }.each { |order|
         @model.add(order)
       }
     end
+  end
+  def direct_argument_keys
+    [:customer_id]
+  end
+  def direct_event
+    [:history, {:customer_id => @customer.customer_id}]
   end
 end
     end

@@ -1,7 +1,6 @@
 function bc_read(bc_comport, bc_noconnection, bc_nocode)
 {
-  dojo.debug('jusqu\'ici tout va bien');
-  var data = new Array();
+  var data = new Object();
   var BCReader = dojo.byId('BCReader');
   data['fail'] = bc_noconnection;
   data['nocd'] = bc_nocode;
@@ -74,14 +73,9 @@ function bc_try(bc_comport, data)
   }
   else
   {
-    var form = document.createElement( "form" );
-    form.method = 'POST';
-    form.action = '/index.rbx'; 
-
-    var BarCodes = new Array();
+    var BarCodes = new Object();
     BarCodes["comport"] =  bc_comport.value;
-    BarCodes["event"] = 'scan';
-    dojo.debug(BarCodes);
+
     while(success = BCReader.Next())
     {
       fname = BCReader.GetCodeType()+"["+BCReader.GetBarCode()+"]";;
@@ -94,30 +88,37 @@ function bc_try(bc_comport, data)
         BarCodes[fname]++;
       }
     }
-    dojo.debug(BarCodes);
     BCReader.Exit();
-    
-    for(fname in BarCodes)
-    {
-      var input = document.createElement( "input" );
-      input.name = fname;
-      input.value = BarCodes[fname];
-      form.appendChild(input);
-    }
-
-    dojo.io.bind({
-      formNode: form,
-      load: function(type, data, evt) {
-        if(data['success']) {
-          bc_clear();
-        }
-        document.location.reload();
-      },
-      mimetype: "text/json"
-    });
-    
+    bc_send(BarCodes);    
   }
   return true;
+}
+
+// this function is testable even if there is no Barcode-Reader
+function bc_send(BarCodes)
+{
+  BarCodes["event"] = 'scan';
+  var form = document.createElement( "form" );
+  form.method = 'POST';
+  form.action = '/index.rbx'; 
+  for(fname in BarCodes)
+  {
+    var input = document.createElement( "input" );
+    input.name = fname;
+    input.value = BarCodes[fname];
+    form.appendChild(input);
+  }
+
+  dojo.io.bind({
+    formNode: form,
+    load: function(type, data, evt) {
+      if(data['success']) {
+        bc_clear();
+      }
+      document.location.reload();
+    },
+    mimetype: "text/json"
+  });
 }
 
 function bc_clear()

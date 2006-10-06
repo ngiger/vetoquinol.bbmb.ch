@@ -26,7 +26,7 @@ module Customer
     @customer ||= Model::Customer.find_by_email(@session.user.name)
   end
   def _increment_order(order)
-    quantities = @session.user_input(:quantity)
+    quantities = user_input(:quantity)
     if(error?)
       false
     else
@@ -38,8 +38,21 @@ module Customer
       true
     end
   end
+  def _transfer(order)
+    if(io = user_input(:file_chooser))
+      BBMB::Util::TransferDat.parse(io) { |info|
+        if(product = Model::Product.find_by_pcode(info.pcode) \
+           || Model::Product.find_by_ean13(info.ean13))
+          order.increment(info.quantity, product)
+        else
+          order.unavailable.push(info)
+        end
+      }
+    end
+    self
+  end
   def _update_order(order)
-    quantities = @session.user_input(:quantity)
+    quantities = user_input(:quantity)
     if(error?)
       false
     else
@@ -73,6 +86,9 @@ module Customer
       trigger(:favorites)
     end
   end
+  def favorite_transfer
+    _transfer(_customer.favorites)
+  end
   def home
     trigger(@session.user.home || :current_order)
   end
@@ -91,6 +107,9 @@ module Customer
     if(_update_order(_customer.current_order))
       trigger(:current_order)
     end
+  end
+  def order_transfer
+    _transfer(_customer.current_order)
   end
   def scan
     success = false
@@ -112,19 +131,6 @@ module Customer
       BBMB.persistence.save(@model)
     end
     State::Json.new(@session, {:success => success})
-  end
-  def transfer
-    if(@model.is_a?(Model::Order) && (io = user_input(:file_chooser)))
-      BBMB::Util::TransferDat.parse(io) { |info|
-        if(product = Model::Product.find_by_pcode(info.pcode) \
-           || Model::Product.find_by_ean13(info.ean13))
-          @model.increment(info.quantity, product)
-        else
-          @model.unavailable.push(info)
-        end
-      }
-    end
-    self
   end
   def zone_navigation
     [ :current_order, :orders, :favorites ]

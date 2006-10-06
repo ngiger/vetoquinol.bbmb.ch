@@ -4,7 +4,7 @@
 $: << File.expand_path('../../lib', File.dirname(__FILE__))
 
 require 'test/unit'
-require 'bbmb/util/money'
+require 'bbmb/util/numbers'
 
 module BBMB
   module Util

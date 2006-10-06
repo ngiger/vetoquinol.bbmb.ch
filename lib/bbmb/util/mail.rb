@@ -4,11 +4,13 @@
 require 'bbmb/config'
 require 'net/smtp'
 require 'rmail'
+require 'pp'
 
 module BBMB
   module Util
 module Mail
   def Mail.notify_error(error)
+    config = BBMB.config
     message = RMail::Message.new
     header = message.header
     from = header.from = config.mail_order_from

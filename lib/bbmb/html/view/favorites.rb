@@ -14,33 +14,35 @@ class SearchFavorites < Search
   EVENT = :search_favorites
 end
 class FavoritesPositions < Positions
+  include Backorder
   include PositionMethods
   CSS_ID = 'favorites'
   COMPONENTS = {
     [0,0]  =>  :delete_position,
     [1,0]  =>  :quantity,
     [2,0]  =>  :description,
-    [3,0]  =>  :price,
-    [4,0]  =>  :price_levels,
-    [5,0]  =>  :price2,
-    [6,0]  =>  :price3,
-    [4,1]  =>  :price4,
-    [5,1]  =>  :price5,
-    [6,1]  =>  :price6,
-    [7,0]  =>  :total,
+    [3,0]  =>  :backorder,
+    [4,0]  =>  :price,
+    [5,0]  =>  :price_levels,
+    [6,0]  =>  :price2,
+    [7,0]  =>  :price3,
+    [5,1]  =>  :price4,
+    [6,1]  =>  :price5,
+    [7,1]  =>  :price6,
+    [8,0]  =>  :total,
   }
   CSS_MAP = {
     [0,0]     => 'delete',
     [1,0]     => 'tiny right',
     [2,0]     => 'description',
-    [3,0,4,2] => 'right',
-    [7,0]     => 'total',
+    [4,0,4,2] => 'right',
+    [8,0]     => 'total',
   }
   CSS_HEAD_MAP = {
     [1,0] => 'right',
-    [3,0] => 'right',
     [4,0] => 'right',
-    [7,0] => 'right',
+    [5,0] => 'right',
+    [8,0] => 'right',
   }
   def delete_position(model)
     super(model, :favorite_product)
@@ -65,12 +67,15 @@ class FavoritesForm < HtmlGrid::DivForm
   COMPONENTS = {
     [0,0] => FavoritesPositions,
     [0,1] => :unavailables,
-    [1,1] => :submit,
-    [2,1] => :nullify,
-    [3,1] => :reset,
   }
   EVENT = :increment_order
   FORM_NAME = 'favorites'
+  def init
+    unless(@model.empty?)
+      components.update( [1,1] => :submit, [2,1] => :nullify, [3,1] => :reset )
+    end
+    super
+  end
   def nullify(model)
     button = HtmlGrid::Button.new(:nullify, model, @session, self)
     button.set_attribute('onClick', "zeroise(this.form);")
@@ -87,11 +92,14 @@ class FavoritesComposite < OrderComposite
     [0,0] => SearchFavorites,
     [1,0] => :barcode_reader,
     [2,0] => :position_count,
-    [3,0] => TransferDat,
+    [3,0] => :favorite_transfer,
     [4,0] => :clear_favorites,
     [0,1] => FavoritesForm,
   }
   CSS_ID_MAP = [ 'toolbar' ]
+  SYMBOL_MAP = {
+    :favorite_transfer => TransferDat,
+  }
   def barcode_reader(model)
     if(@session.client_activex?)
       BarcodeReader.new(model, @session, self)
@@ -104,7 +112,7 @@ class FavoritesComposite < OrderComposite
   end
   def position_count(model)
     span = HtmlGrid::Span.new(model, @session, self)
-    span.value = @lookandfeel.lookup(:positions, model.size)
+    span.value = @lookandfeel.lookup(:favorite_positions, model.size)
     span.css_class = 'guide'
     span
   end

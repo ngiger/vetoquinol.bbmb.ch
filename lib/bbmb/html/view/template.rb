@@ -43,6 +43,11 @@ class Template < HtmlGrid::DivTemplate
       "#{BBMB.config.session_timeout}; URL=#{@lookandfeel._event_url(:logout)}")
     headers
   end
+  def title(context)
+    parts = [:html_title, *@session.state.direct_event].collect { |key| 
+      @lookandfeel.lookup(key) }.compact
+    context.title { parts.join(' | ') }
+  end
 end
     end
   end

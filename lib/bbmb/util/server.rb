@@ -29,7 +29,7 @@ module BBMB
       end
       def logout(session)
         BBMB.auth.logout(session)
-      rescue DRb::DRbError, RangeError
+      rescue DRb::DRbError, RangeError, MethodMissing
       end
       def rename_user(old, new)
         return if(old == new)
@@ -42,7 +42,8 @@ module BBMB
         }
       end
       def run_invoicer
-        @invoicer = Thread.new {
+        @invoicer ||= Thread.new {
+          Thread.current.abort_on_exception = true
           loop {
             today = Date.today
             day = today >> 1
@@ -59,7 +60,7 @@ module BBMB
         }
       end
       def run_updater
-        @updater = Thread.new {
+        @updater ||= Thread.new {
           loop {
             day = Date.today
             now = Time.now

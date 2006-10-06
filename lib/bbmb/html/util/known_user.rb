@@ -40,13 +40,9 @@ class KnownUser < SBSM::User
     [ :logout ]
   end
   def remote_call(method, *args, &block)
-    ## yus does not understand unicode-strings
-    args.collect! { |arg| 
-      arg.is_a?(String) ? arg.to_s : arg
-    }
     @auth_session.send(method, *args, &block)
   rescue RangeError, DRb::DRbError => e
-    warn e
+    BBMB.logger.error('auth') { e }
   end
   alias :method_missing :remote_call
 end

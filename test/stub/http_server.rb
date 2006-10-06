@@ -20,12 +20,18 @@ module BBMB
     class HTTPServer < WEBrick::HTTPServer
       attr_accessor :document_root
       def method_missing(method, *args, &block)
-        warn "ignoring method: #{method}"
+        @logger.warn "ignoring method: #{method}"
       end
     end
-    def Stub.http_server(drburi)
+    def Stub.http_server(drburi, log_level=0)
       doc = File.expand_path('../../doc', File.dirname(__FILE__))
-      server = HTTPServer.new(:Port => 10080, :DocumentRoot => doc)
+      logger = WEBrick::Log.new
+      logger.level = log_level
+      config = { :Port => 10080, :DocumentRoot => doc, :Logger => logger }
+      if(log_level == 0)
+        config.store(:AccessLog, [])
+      end
+      server = HTTPServer.new(config)
       server.document_root = doc
       bbmb = Proc.new { |req, resp| 
         if(req.uri == '/favicon.ico')
@@ -33,6 +39,7 @@ module BBMB
         else
           ARGV.push('')
           req.server = server
+          req.uri = CGI.unescape(req.uri)
           SBSM::TransHandler.instance.translate_uri(req)
           ## not Threadsafe!
           SBSM::Apache.request = req
