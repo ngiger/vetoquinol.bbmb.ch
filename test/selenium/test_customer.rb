@@ -76,6 +76,7 @@ class TestCustomer < Test::Unit::TestCase
     assert @selenium.is_element_present("fax")
 
     assert !@selenium.is_element_present("change_password")
+    assert !@selenium.is_element_present("generate_pass")
     assert_equal "Passwort*", @selenium.get_text("//label[@for='pass']")
     assert @selenium.is_element_present("pass")
     assert_equal "Bestätigung*", @selenium.get_text("//label[@for='confirm_pass']")
@@ -161,6 +162,7 @@ class TestCustomer < Test::Unit::TestCase
 
     assert !@selenium.is_text_present("Das Benutzerprofil wurde nicht gespeichert!")
     assert @selenium.is_element_present("change_password")
+    assert @selenium.is_element_present("generate_pass")
     assert_equal "Passwort ändern", @selenium.get_value("change_password")
   end
   def test_customer__duplicate_email
@@ -232,6 +234,50 @@ class TestCustomer < Test::Unit::TestCase
 
     assert @selenium.is_text_present("Das Benutzerprofil wurde nicht gespeichert!")
     assert @selenium.is_text_present("Das Passwort konnte nicht gespeichert werden")
+  end
+  def test_customer__generate_pass
+    BBMB.server = flexmock('server')
+    BBMB.server.should_ignore_missing
+    BBMB.persistence.should_ignore_missing
+    customer = BBMB::Model::Customer.new('007')
+    customer.organisation = 'Test-Customer'
+    customer.instance_variable_set('@email', 'test.customer@bbmb.ch')
+    customer.drtitle = 'Dr. med. vet.'
+    customer.firstname = 'firstname'
+    customer.lastname = 'lastname'
+    customer.plz = '7777'
+    customer.city = 'city'
+    customer.ean13 = "7680123456781"
+    customer.address1 = "Address"
+    @persistence.should_receive(:all).and_return { |klass|
+      assert_equal(BBMB::Model::Customer, klass)
+      [customer]
+    }
+
+    user = login_admin
+    user.should_receive(:get_preference).and_return('')
+    entity = flexmock('yus-entity')
+    entity.should_receive(:valid?).and_return(true)
+    @yus_entities.store(customer.email, entity)
+
+    @selenium.click "link=Test-Customer"
+    @selenium.wait_for_page_to_load "30000"
+
+    flexstub(Util::PasswordGenerator).should_receive(:generate).and_return 'pass'
+
+    user.should_receive(:set_password).times(1).and_return { |email, hash|
+      assert_equal('test.customer@bbmb.ch', email)
+      assert_equal(Digest::MD5.hexdigest('pass'), hash)
+      @yus_entities.store(email, entity)
+    }
+
+    @selenium.click "generate_pass"
+    @selenium.wait_for_page_to_load "30000"
+
+    assert !@selenium.is_text_present("Das Benutzerprofil wurde nicht gespeichert!")
+    assert @selenium.is_element_present("change_password")
+    assert(@selenium.is_element_present("generate_pass") \
+           || @selenium.is_element_present("show_pass"))
   end
 end
   end

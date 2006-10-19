@@ -20,6 +20,13 @@ td.description, a.commit-time {
   font-size: 14px;
   font-weight: bold;
 }
+div.address {
+  padding: 4px;
+}
+div#admin-address {
+  position: relative;
+  left: 60%;
+}
 div#divider {
 	background-color: #00A46D;
   height: 20px;

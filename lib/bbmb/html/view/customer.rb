@@ -4,6 +4,7 @@
 require 'bbmb/html/view/template'
 require 'htmlgrid/errormessage'
 require 'htmlgrid/form'
+require 'htmlgrid/popuplink'
 require 'htmlgrid/select'
 
 module BBMB
@@ -39,7 +40,8 @@ class CustomerForm < HtmlGrid::Form
     [1,12,3]=>  :change_pass, # in UserView#change_pass, the third 
                               # number here is used as the value of 
                               # the colspan attribute
-    #[1,12,4]=>  :generate_pass,
+    [1,12,4]=>  '&nbsp;',
+    [1,12,5]=>  :generate_pass,
     [2,12]  =>  :confirm_pass,
     [1,13]  =>  :submit,
   }
@@ -76,6 +78,23 @@ class CustomerForm < HtmlGrid::Form
   def confirm_pass(model)
     _pass(:confirm_pass, model)
   end
+  def generate_pass(model)
+    unless(set_pass? || model.email.nil?)
+      if(@session.state.cleartext)
+				link = HtmlGrid::Link.new(:show_pass, model, @session, self)
+        link.href = 'javascript:' << popup(@lookandfeel._event_url(:show_pass), 
+                                           'password')
+        link
+      else
+        button = HtmlGrid::Button.new(:generate_pass, model, @session, self)
+        form = "document.#{formname}"
+        button.onclick = "#{form}.event.value='generate_pass';#{form}.submit();"
+        matrix = components.index(:change_pass)
+        @grid.set_colspan(*matrix)
+        button
+      end
+    end
+  end
   def history(model)
     link = HtmlGrid::Link.new(:history, model, @session, self)
     link.href = @lookandfeel._event_url(:history, 
@@ -89,6 +108,13 @@ class CustomerForm < HtmlGrid::Form
     if(set_pass?)
       HtmlGrid::Pass.new(key, model, @session, self)
     end
+  end
+  def popup(url, name='popup')
+    script = "window.open('#{url}','#{name}','resizable=yes,menubar=no,height=350,width=500').focus();" 
+    if(self.respond_to?(:onload=))
+      self.onload = script
+    end
+    script
   end
   def set_pass?
     @session.event == :change_pass || @session.state.set_pass?

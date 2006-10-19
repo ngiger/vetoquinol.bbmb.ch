@@ -18,6 +18,7 @@ module BBMB
     '/etc/bbmb/bbmb.yml',
   ]
   defaults = {
+    'admin_address'       => '',
     'admins'              => [],
     'auth_domain'         => 'ch.bbmb',
     'auth_url'            => 'druby://localhost:12001',

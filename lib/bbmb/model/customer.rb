@@ -18,6 +18,16 @@ class Customer
     @favorites = Order.new(self)
     @protected = {}
   end
+  def address_lines
+    [
+      @organisation,
+      [@drtitle, @firstname, @lastname].compact.join(' '),
+      @address1,
+      @address2,
+      @address3,
+      [@plz, @city].compact.join(' '),
+    ].compact
+  end
   def commit_order!(commit_time = Time.now)
     Thread.exclusive {
       id = @archive.keys.max.to_i.next

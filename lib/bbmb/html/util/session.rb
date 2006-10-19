@@ -56,6 +56,9 @@ class Session < SBSM::Session
       super
     end
   end
+  def validate(key, value)
+    @validator.validate(key, value)
+  end
 end
     end
   end
