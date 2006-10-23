@@ -38,13 +38,13 @@ class Customer < Global
     else
       error = create_error(:e_email_required, :email, @model.email)
       @errors.store(:email, error)
-      @errors.store(:pass, error)
     end
     self
   end
   def mandatory
     mandatory = _mandatory
-    if(set_pass? || @session.user_input(:pass))
+    if(@session.user_input(:pass) \
+       || @session.user_input(:confirm_pass))
       mandatory += [:pass, :confirm_pass]
     end
     mandatory
@@ -78,7 +78,7 @@ class Customer < Global
     update_user(input)
     if(error?)
       @errors.store(:error, create_error(:error, :error, nil))
-      @errors.store(:e_user_unsaved, create_error(:e_user_unsaved, :error, nil))
+      @errors.store(:user, create_error(:e_user_unsaved, :error, nil))
     else
       input.each { |key, val| 
         writer = "#{key}="
@@ -89,10 +89,6 @@ class Customer < Global
       }
       BBMB.persistence.save(@model)
     end
-  end
-  def set_pass?
-    !@session.user.entity_valid?(@model.email) \
-      || @session.error(:pass) || @session.error(:confirm_pass)
   end
   def show_pass
     model = OpenStruct.new

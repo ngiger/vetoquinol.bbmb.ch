@@ -75,12 +75,10 @@ class TestCustomer < Test::Unit::TestCase
     assert_equal "Fax", @selenium.get_text("//label[@for='fax']")
     assert @selenium.is_element_present("fax")
 
-    assert !@selenium.is_element_present("change_password")
-    assert !@selenium.is_element_present("generate_pass")
-    assert_equal "Passwort*", @selenium.get_text("//label[@for='pass']")
-    assert @selenium.is_element_present("pass")
-    assert_equal "Bestätigung*", @selenium.get_text("//label[@for='confirm_pass']")
-    assert @selenium.is_element_present("confirm_pass")
+    assert @selenium.is_element_present("change_password")
+    assert @selenium.is_element_present("generate_pass")
+    assert !@selenium.is_element_present("pass")
+    assert !@selenium.is_element_present("confirm_pass")
 
     assert @selenium.is_element_present("save")
     assert_equal "Speichern", @selenium.get_value("save")
@@ -100,6 +98,11 @@ class TestCustomer < Test::Unit::TestCase
     user = login_admin
     @selenium.click "link=Test-Customer"
     @selenium.wait_for_page_to_load "30000"
+
+    @selenium.click "change_password"
+    @selenium.wait_for_page_to_load "30000"
+
+    assert @selenium.is_text_present("Das Benutzerprofil wurde nicht gespeichert!")
 
     @selenium.type "ean13", "768012345678"
     @selenium.click "save"
@@ -138,6 +141,9 @@ class TestCustomer < Test::Unit::TestCase
     user.should_receive(:get_preference).and_return('')
 
     @selenium.click "link=Test-Customer"
+    @selenium.wait_for_page_to_load "30000"
+
+    @selenium.click "change_password"
     @selenium.wait_for_page_to_load "30000"
 
     @selenium.type "ean13", "7680123456781"
@@ -185,6 +191,9 @@ class TestCustomer < Test::Unit::TestCase
     @selenium.click "link=Test-Customer"
     @selenium.wait_for_page_to_load "30000"
 
+    @selenium.click "change_password"
+    @selenium.wait_for_page_to_load "30000"
+
     @selenium.type "email", "test.user@bbmb.ch"
     @selenium.type "address1", "Address"
     @selenium.type "pass", "secret"
@@ -219,6 +228,9 @@ class TestCustomer < Test::Unit::TestCase
     }
 
     @selenium.click "link=Test-Customer"
+    @selenium.wait_for_page_to_load "30000"
+
+    @selenium.click "change_password"
     @selenium.wait_for_page_to_load "30000"
 
     @selenium.type "email", "test.user@bbmb.ch"

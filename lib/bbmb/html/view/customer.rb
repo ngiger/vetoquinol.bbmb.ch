@@ -79,7 +79,7 @@ class CustomerForm < HtmlGrid::Form
     _pass(:confirm_pass, model)
   end
   def generate_pass(model)
-    unless(set_pass? || model.email.nil?)
+    unless(set_pass?)
       if(@session.state.cleartext)
 				link = HtmlGrid::Link.new(:show_pass, model, @session, self)
         link.href = 'javascript:' << popup(@lookandfeel._event_url(:show_pass), 
@@ -117,7 +117,8 @@ class CustomerForm < HtmlGrid::Form
     script
   end
   def set_pass?
-    @session.event == :change_pass || @session.state.set_pass?
+    @session.event == :change_pass \
+      || @session.error(:pass) || @session.error(:confirm_pass)
   end
   def turnaround(model)
     link = HtmlGrid::Link.new(:turnaround, model, @session, self)
