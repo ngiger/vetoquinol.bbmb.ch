@@ -29,7 +29,7 @@ module BBMB
       end
       def logout(session)
         BBMB.auth.logout(session)
-      rescue DRb::DRbError, RangeError, MethodMissing
+      rescue DRb::DRbError, RangeError, NameError
       end
       def rename_user(old, new)
         return if(old == new)
