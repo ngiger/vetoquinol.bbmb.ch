@@ -25,8 +25,8 @@ module BBMB
         message.add_part(part1)
         part2 = RMail::Message.new
         part2.body = "attached data"
-        part2.header.add("Content-Disposition",'attachment', nil,
-                         'filename' => "ywsarti.csv")
+        part2.header.add("Content-Type",'TEXT/plain', nil,
+                         'NAME' => "=?ISO-8859-1?Q?ywsarti.csv?=")
         message.add_part(part2)
         blk_called = false
         @mission.poll_message(message) { |filename, data|
@@ -43,8 +43,8 @@ module BBMB
         message.add_part(part1)
         part2 = RMail::Message.new
         part2.body = "attached data"
-        part2.header.add("Content-Disposition",'attachment', nil,
-                         [['filename', "ywsarti.csv"], ["foo", "b.r"]])
+        part2.header.add("Content-Type",'TEXT/plain', nil,
+                         [['NAME', "ywsarti.csv"], ["foo", "b.r"]])
         message.add_part(part2)
         blk_called = false
         @mission.poll_message(message) { |filename, data|
@@ -61,7 +61,7 @@ module BBMB
         message.add_part(part1)
         part2 = RMail::Message.new
         part2.body = "attached data"
-        part2.header.add("Content-Disposition",'attachment', nil,
+        part2.header.add("Content-Type",'text/plain', nil,
                          [['filename', "ywsarti"], ["foo", "bar"]])
         message.add_part(part2)
         blk_called = false

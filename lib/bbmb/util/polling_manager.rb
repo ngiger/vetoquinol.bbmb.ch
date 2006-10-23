@@ -12,7 +12,7 @@ module BBMB
   module Util
 class PopMission 
   attr_accessor :host, :port, :user, :pass, :delete
-  @@ptrn = /filename=(?:(?:(?<quote>['"])(?<file>.*?)(?<!\\)\k<quote>)|(?:(?<file>.+?)(?:;|$)))/
+  @@ptrn = /name=(?:(?:(?<quote>['"])(?:=\?.+?\?[QB]\?)?(?<file>.*?)(\?=)?(?<!\\)\k<quote>)|(?:(?<file>.+?)(?:;|$)))/i
   def poll(&block)
     Net::POP3.start(@host, @port || 110, @user, @pass) { |pop|
       pop.each_mail { |mail|
@@ -30,7 +30,7 @@ class PopMission
       message.each_part { |part|
         poll_message(part, &block)
       }
-    elsif(match = @@ptrn.match(message.header["Content-Disposition"]))
+    elsif(match = @@ptrn.match(message.header["Content-Type"]))
       block.call(match["file"], message.decode)
     end
   end
