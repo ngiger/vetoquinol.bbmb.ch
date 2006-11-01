@@ -3,6 +3,7 @@
 
 require 'ydim/config'
 require 'ydim/client'
+require 'openssl'
 
 module BBMB
   module Util
