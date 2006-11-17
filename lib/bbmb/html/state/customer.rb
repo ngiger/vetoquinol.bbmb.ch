@@ -27,11 +27,13 @@ class Customer < Global
   end
   def generate_pass
     _save
-    if(@model.email)
+    if(email = @model.email)
       @cleartext = BBMB::Util::PasswordGenerator.generate(@model)
       passhash = @session.validate(:pass, @cleartext)
       begin
-        @session.user.set_password(@model.email, passhash)
+        @session.user.grant(email, 'login', 
+                          BBMB.config.auth_domain + '.Customer')
+        @session.user.set_password(email, passhash)
       rescue Yus::YusError
         @errors.store(:pass, create_error(:e_pass_not_set, :pass, nil))
       end
