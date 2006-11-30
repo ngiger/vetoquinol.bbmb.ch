@@ -37,7 +37,7 @@ class TestCustomer < Test::Unit::TestCase
 
     assert_equal "Umsatz", @selenium.get_text("//label[@for='turnaround']")
     assert @selenium.is_element_present("link=Sfr. 0.00")
-    url = "http://vetoquinol.bbmb.ch.localhost:10080/de/orders/customer_id/007"
+    url = "http://localhost:10080/de/orders/customer_id/007"
     assert_equal url, @selenium.get_attribute("//a[@name='turnaround']@href")
 
     assert @selenium.is_element_present("link=Umsatz")
@@ -286,6 +286,19 @@ class TestCustomer < Test::Unit::TestCase
     @selenium.click "generate_pass"
     @selenium.wait_for_page_to_load "30000"
 
+=begin # selecting a window opened by onload does not seem to work.
+    @selenium.select_window('password')
+    assert_equal "BBMB | Kunde", @selenium.get_title
+    assert @selenium.is_text_present("Test-Customer")
+    assert @selenium.is_text_present("Dr. med. vet. firstname lastname")
+    assert @selenium.is_text_present("Address")
+    assert @selenium.is_text_present("7777")
+    assert @selenium.is_text_present("pass")
+    assert @selenium.is_text_present("test.customer@bbmb.ch")
+    @selenium.close
+=end
+
+    @selenium.select_window("null")
     assert !@selenium.is_text_present("Das Benutzerprofil wurde nicht gespeichert!")
     assert @selenium.is_element_present("change_password")
     assert(@selenium.is_element_present("generate_pass") \

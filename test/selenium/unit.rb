@@ -4,7 +4,7 @@
 if(pid = Kernel.fork)
   at_exit {
     Process.kill('HUP', pid)
-    $selenium.stop
+    #$selenium.stop if($selenium.respond_to?(:stop))
   }
 else
   path = File.expand_path('selenium-server.jar', File.dirname(__FILE__))
@@ -34,6 +34,8 @@ class SeleniumWrapper < SimpleDelegator
 end
   end
 end
+
+BBMB.config.http_server = 'http://localhost'
 
 $selenium = BBMB::Selenium::SeleniumWrapper.new("localhost", 4444, 
   "*chrome", BBMB.config.http_server + ":10080", 10000)
@@ -87,7 +89,7 @@ module TestCase
                                       BBMB.config.http_server + ":10080", 10000)
       @selenium.start
     end
-    @selenium.set_context("TestCustomers", "info")
+    @selenium.set_context("TestBbmb", "info")
   end
   def teardown
     @selenium.stop unless $selenium

@@ -52,10 +52,11 @@ require 'cgi'
 #     
 # *    <b>dom</b>=<em>javascriptExpression</em>::
 #     
-#         Find an element using JavaScript traversal of the HTML Document Object
-#         Model. DOM locators <em>must</em> begin with "document.".
+#         Find an element by evaluating the specified string.  This allows you to traverse the HTML Document Object
+#         Model using JavaScript.  Note that you must not return a value in this string; simply make it the last expression in the block.
 #         *    dom=document.forms['myForm'].myDropdown
 #         *    dom=document.images[56]
+#         *    dom=function foo() { return document.links[1]; }; foo();
 #         
 #         
 #     
@@ -71,6 +72,14 @@ require 'cgi'
 #     *    link=The link text
 #     
 #     
+# *    <b>css</b>=<em>cssSelectorSyntax</em>::
+#     Select the element using css selectors. Please refer to CSS2 selectors, CSS3 selectors for more information. You can also check the TestCssLocators test in the selenium test suite for an example of usage, which is included in the downloaded selenium core package.
+#     *    css=a[href="#id3"]
+#     *    css=span#firstChild + span
+#     
+#     
+# 
+#     Currently the css selector locator supports all css1, css2 and css3 selectors except namespace in css3, some pseudo classes(:nth-of-type, :nth-last-of-type, :first-of-type, :last-of-type, :only-of-type, :visited, :hover, :active, :focus, :indeterminate) and pseudo elements(::first-line, ::first-letter, ::selection, ::before, ::after). 
 # 
 # 
 # Without an explicit locator prefix, Selenium uses the following default
@@ -110,7 +119,7 @@ require 'cgi'
 # 
 module Selenium
 
-    class SeleneseInterpreter
+    class SeleniumDriver
         include Selenium
     
         def initialize(server_host, server_port, browserStartCommand, browserURL, timeout=30000)
@@ -122,7 +131,7 @@ module Selenium
         end
         
         def to_s
-            "SeleneseInterpreter"
+            "SeleniumDriver"
         end
 
         def start()
@@ -165,12 +174,15 @@ module Selenium
             csv = get_string(verb, args)
             token = ""
             tokens = []
-            csv.length.times do |i|
-                letter = csv[i,1]
-                if (letter == '\\')
-                    i++
-                    letter = csv[i,1]
+            escape = false
+            csv.split(//).each do |letter|
+                if escape
                     token = token + letter
+                    escape = false
+                    next
+                end
+                if (letter == '\\')
+                    escape = true
                 elsif (letter == ',')
                     tokens.push(token)
                     token = ""
@@ -231,6 +243,38 @@ module Selenium
         end
 
 
+        # Double clicks on a link, button, checkbox or radio button. If the double click action
+        # causes a new page to load (like a link usually does), call
+        # waitForPageToLoad.
+        #
+        # 'locator' is an element locator
+        def double_click(locator)
+            do_command("doubleClick", [locator,])
+        end
+
+
+        # Clicks on a link, button, checkbox or radio button. If the click action
+        # causes a new page to load (like a link usually does), call
+        # waitForPageToLoad.
+        #
+        # 'locator' is an element locator
+        # 'coordString' is specifies the x,y position (i.e. - 10,20) of the mouse      event relative to the element returned by the locator.
+        def click_at(locator,coordString)
+            do_command("clickAt", [locator,coordString,])
+        end
+
+
+        # Doubleclicks on a link, button, checkbox or radio button. If the action
+        # causes a new page to load (like a link usually does), call
+        # waitForPageToLoad.
+        #
+        # 'locator' is an element locator
+        # 'coordString' is specifies the x,y position (i.e. - 10,20) of the mouse      event relative to the element returned by the locator.
+        def double_click_at(locator,coordString)
+            do_command("doubleClickAt", [locator,coordString,])
+        end
+
+
         # Explicitly simulate an event, to trigger the corresponding "on<em>event</em>"
         # handler.
         #
@@ -244,27 +288,83 @@ module Selenium
         # Simulates a user pressing and releasing a key.
         #
         # 'locator' is an element locator
-        # 'keycode' is the numeric keycode of the key to be pressed, normally the            ASCII value of that key.
-        def key_press(locator,keycode)
-            do_command("keyPress", [locator,keycode,])
+        # 'keySequence' is Either be a string("\" followed by the numeric keycode  of the key to be pressed, normally the ASCII value of that key), or a single  character. For example: "w", "\119".
+        def key_press(locator,keySequence)
+            do_command("keyPress", [locator,keySequence,])
+        end
+
+
+        # Press the shift key and hold it down until doShiftUp() is called or a new page is loaded.
+        #
+        def shift_key_down()
+            do_command("shiftKeyDown", [])
+        end
+
+
+        # Release the shift key.
+        #
+        def shift_key_up()
+            do_command("shiftKeyUp", [])
+        end
+
+
+        # Press the meta key and hold it down until doMetaUp() is called or a new page is loaded.
+        #
+        def meta_key_down()
+            do_command("metaKeyDown", [])
+        end
+
+
+        # Release the meta key.
+        #
+        def meta_key_up()
+            do_command("metaKeyUp", [])
+        end
+
+
+        # Press the alt key and hold it down until doAltUp() is called or a new page is loaded.
+        #
+        def alt_key_down()
+            do_command("altKeyDown", [])
+        end
+
+
+        # Release the alt key.
+        #
+        def alt_key_up()
+            do_command("altKeyUp", [])
+        end
+
+
+        # Press the control key and hold it down until doControlUp() is called or a new page is loaded.
+        #
+        def control_key_down()
+            do_command("controlKeyDown", [])
+        end
+
+
+        # Release the control key.
+        #
+        def control_key_up()
+            do_command("controlKeyUp", [])
         end
 
 
         # Simulates a user pressing a key (without releasing it yet).
         #
         # 'locator' is an element locator
-        # 'keycode' is the numeric keycode of the key to be pressed, normally the            ASCII value of that key.
-        def key_down(locator,keycode)
-            do_command("keyDown", [locator,keycode,])
+        # 'keySequence' is Either be a string("\" followed by the numeric keycode  of the key to be pressed, normally the ASCII value of that key), or a single  character. For example: "w", "\119".
+        def key_down(locator,keySequence)
+            do_command("keyDown", [locator,keySequence,])
         end
 
 
         # Simulates a user releasing a key.
         #
         # 'locator' is an element locator
-        # 'keycode' is the numeric keycode of the key to be released, normally the            ASCII value of that key.
-        def key_up(locator,keycode)
-            do_command("keyUp", [locator,keycode,])
+        # 'keySequence' is Either be a string("\" followed by the numeric keycode  of the key to be pressed, normally the ASCII value of that key), or a single  character. For example: "w", "\119".
+        def key_up(locator,keySequence)
+            do_command("keyUp", [locator,keySequence,])
         end
 
 
@@ -276,12 +376,68 @@ module Selenium
         end
 
 
+        # Simulates a user moving the mouse pointer away from the specified element.
+        #
+        # 'locator' is an element locator
+        def mouse_out(locator)
+            do_command("mouseOut", [locator,])
+        end
+
+
         # Simulates a user pressing the mouse button (without releasing it yet) on
         # the specified element.
         #
         # 'locator' is an element locator
         def mouse_down(locator)
             do_command("mouseDown", [locator,])
+        end
+
+
+        # Simulates a user pressing the mouse button (without releasing it yet) on
+        # the specified element.
+        #
+        # 'locator' is an element locator
+        # 'coordString' is specifies the x,y position (i.e. - 10,20) of the mouse      event relative to the element returned by the locator.
+        def mouse_down_at(locator,coordString)
+            do_command("mouseDownAt", [locator,coordString,])
+        end
+
+
+        # Simulates a user pressing the mouse button (without releasing it yet) on
+        # the specified element.
+        #
+        # 'locator' is an element locator
+        def mouse_up(locator)
+            do_command("mouseUp", [locator,])
+        end
+
+
+        # Simulates a user pressing the mouse button (without releasing it yet) on
+        # the specified element.
+        #
+        # 'locator' is an element locator
+        # 'coordString' is specifies the x,y position (i.e. - 10,20) of the mouse      event relative to the element returned by the locator.
+        def mouse_up_at(locator,coordString)
+            do_command("mouseUpAt", [locator,coordString,])
+        end
+
+
+        # Simulates a user pressing the mouse button (without releasing it yet) on
+        # the specified element.
+        #
+        # 'locator' is an element locator
+        def mouse_move(locator)
+            do_command("mouseMove", [locator,])
+        end
+
+
+        # Simulates a user pressing the mouse button (without releasing it yet) on
+        # the specified element.
+        #
+        # 'locator' is an element locator
+        # 'coordString' is specifies the x,y position (i.e. - 10,20) of the mouse      event relative to the element returned by the locator.
+        def mouse_move_at(locator,coordString)
+            do_command("mouseMoveAt", [locator,coordString,])
         end
 
 
@@ -295,6 +451,25 @@ module Selenium
         # 'value' is the value to type
         def type(locator,value)
             do_command("type", [locator,value,])
+        end
+
+
+        # Set execution speed (i.e., set the millisecond length of a delay which will follow each selenium operation).  By default, there is no such delay, i.e.,
+        # the delay is 0 milliseconds.
+        #
+        # 'value' is the number of milliseconds to pause after operation
+        def set_speed(value)
+            do_command("setSpeed", [value,])
+        end
+
+
+        # Get execution speed (i.e., get the millisecond length of the delay following each selenium operation).  By default, there is no such delay, i.e.,
+        # the delay is 0 milliseconds.
+        # 
+        # See also setSpeed.
+        #
+        def get_speed()
+            do_command("getSpeed", [])
         end
 
 
@@ -404,13 +579,107 @@ module Selenium
         end
 
 
+        # Opens a popup window (if a window with that ID isn't already open).
+        # After opening the window, you'll need to select it using the selectWindow
+        # command.
+        # 
+        # This command can also be a useful workaround for bug SEL-339.  In some cases, Selenium will be unable to intercept a call to window.open (if the call occurs during or before the "onLoad" event, for example).
+        # In those cases, you can force Selenium to notice the open window's name by using the Selenium openWindow command, using
+        # an empty (blank) url, like this: openWindow("", "myFunnyWindow").
+        # 
+        #
+        # 'url' is the URL to open, which can be blank
+        # 'windowID' is the JavaScript window ID of the window to select
+        def open_window(url,windowID)
+            do_command("openWindow", [url,windowID,])
+        end
+
+
         # Selects a popup window; once a popup window has been selected, all
-        # commands go to that window. To select the main window again, use "null"
+        # commands go to that window. To select the main window again, use null
         # as the target.
+        # 
+        # Selenium has several strategies for finding the window object referred to by the "windowID" parameter.
+        # 1.) if windowID is null, then it is assumed the user is referring to the original window instantiated by the browser).
+        # 2.) if the value of the "windowID" parameter is a JavaScript variable name in the current application window, then it is assumed
+        # that this variable contains the return value from a call to the JavaScript window.open() method.
+        # 3.) Otherwise, selenium looks in a hash it maintains that maps string names to window objects.  Each of these string 
+        # names matches the second parameter "windowName" past to the JavaScript method  window.open(url, windowName, windowFeatures, replaceFlag)
+        # (which selenium intercepts).
+        # If you're having trouble figuring out what is the name of a window that you want to manipulate, look at the selenium log messages
+        # which identify the names of windows created via window.open (and therefore intercepted by selenium).  You will see messages
+        # like the following for each window as it is opened:
+        # <tt>debug: window.open call intercepted; window ID (which you can use with selectWindow()) is "myNewWindow"</tt>
+        # In some cases, Selenium will be unable to intercept a call to window.open (if the call occurs during or before the "onLoad" event, for example).
+        # (This is bug SEL-339.)  In those cases, you can force Selenium to notice the open window's name by using the Selenium openWindow command, using
+        # an empty (blank) url, like this: openWindow("", "myFunnyWindow").
+        # 
         #
         # 'windowID' is the JavaScript window ID of the window to select
         def select_window(windowID)
             do_command("selectWindow", [windowID,])
+        end
+
+
+        # Selects a frame within the current window.  (You may invoke this command
+        # multiple times to select nested frames.)  To select the parent frame, use
+        # "relative=parent" as a locator; to select the top frame, use "relative=top".
+        # 
+        # You may also use a DOM expression to identify the frame you want directly,
+        # like this: <tt>dom=frames["main"].frames["subframe"]</tt>
+        # 
+        #
+        # 'locator' is an element locator identifying a frame or iframe
+        def select_frame(locator)
+            do_command("selectFrame", [locator,])
+        end
+
+
+        # Return the contents of the log.
+        # 
+        # This is a placeholder intended to make the code generator make this API
+        # available to clients.  The selenium server will intercept this call, however,
+        # and return its recordkeeping of log messages since the last call to this API.
+        # Thus this code in JavaScript will never be called.
+        # The reason I opted for a servercentric solution is to be able to support
+        # multiple frames served from different domains, which would break a
+        # centralized JavaScript logging mechanism under some conditions.
+        # 
+        #
+        def get_log_messages()
+            return get_string("getLogMessages", [])
+        end
+
+
+        # Determine whether current/locator identify the frame containing this running code.
+        # 
+        # This is useful in proxy injection mode, where this code runs in every
+        # browser frame and window, and sometimes the selenium server needs to identify
+        # the "current" frame.  In this case, when the test calls selectFrame, this
+        # routine is called for each frame to figure out which one has been selected.
+        # The selected frame will return true, while all others will return false.
+        # 
+        #
+        # 'currentFrameString' is starting frame
+        # 'target' is new frame (which might be relative to the current one)
+        def get_whether_this_frame_match_frame_expression(currentFrameString,target)
+            return get_boolean("getWhetherThisFrameMatchFrameExpression", [currentFrameString,target,])
+        end
+
+
+        # Determine whether currentWindowString plus target identify the window containing this running code.
+        # 
+        # This is useful in proxy injection mode, where this code runs in every
+        # browser frame and window, and sometimes the selenium server needs to identify
+        # the "current" window.  In this case, when the test calls selectWindow, this
+        # routine is called for each window to figure out which one has been selected.
+        # The selected window will return true, while all others will return false.
+        # 
+        #
+        # 'currentWindowString' is starting window
+        # 'target' is new window (which might be relative to the current one, e.g., "_parent")
+        def get_whether_this_window_match_window_expression(currentWindowString,target)
+            return get_boolean("getWhetherThisWindowMatchWindowExpression", [currentWindowString,target,])
         end
 
 
@@ -603,7 +872,7 @@ module Selenium
         end
 
 
-        # Gets the result of evaluating the specified JavaScript snippet.  The snippet may 
+        # Gets the result of evaluating the specified JavaScript snippet.  The snippet may
         # have multiple lines, but only the result of the last line will be returned.
         # 
         # Note that, by default, the snippet will run in the context of the "selenium"
@@ -793,6 +1062,78 @@ module Selenium
         end
 
 
+        # Returns every instance of some attribute from all known windows.
+        #
+        # 'attributeName' is name of an attribute on the windows
+        def get_attribute_from_all_windows(attributeName)
+            return get_string_array("getAttributeFromAllWindows", [attributeName,])
+        end
+
+
+        # deprecated - use dragAndDrop instead
+        #
+        # 'locator' is an element locator
+        # 'movementsString' is offset in pixels from the current location to which the element should be moved, e.g., "+70,-300"
+        def dragdrop(locator,movementsString)
+            do_command("dragdrop", [locator,movementsString,])
+        end
+
+
+        # Drags an element a certain distance and then drops it
+        #
+        # 'locator' is an element locator
+        # 'movementsString' is offset in pixels from the current location to which the element should be moved, e.g., "+70,-300"
+        def drag_and_drop(locator,movementsString)
+            do_command("dragAndDrop", [locator,movementsString,])
+        end
+
+
+        # Drags an element and drops it on another element
+        #
+        # 'locatorOfObjectToBeDragged' is an element to be dragged
+        # 'locatorOfDragDestinationObject' is an element whose location (i.e., whose top left corner) will be the point where locatorOfObjectToBeDragged  is dropped
+        def drag_and_drop_to_object(locatorOfObjectToBeDragged,locatorOfDragDestinationObject)
+            do_command("dragAndDropToObject", [locatorOfObjectToBeDragged,locatorOfDragDestinationObject,])
+        end
+
+
+        # Gives focus to a window
+        #
+        # 'windowName' is name of the window to be given focus
+        def window_focus(windowName)
+            do_command("windowFocus", [windowName,])
+        end
+
+
+        # Resize window to take up the entire screen
+        #
+        # 'windowName' is name of the window to be enlarged
+        def window_maximize(windowName)
+            do_command("windowMaximize", [windowName,])
+        end
+
+
+        # Returns the IDs of all windows that the browser knows about.
+        #
+        def get_all_window_ids()
+            return get_string_array("getAllWindowIds", [])
+        end
+
+
+        # Returns the names of all windows that the browser knows about.
+        #
+        def get_all_window_names()
+            return get_string_array("getAllWindowNames", [])
+        end
+
+
+        # Returns the titles of all windows that the browser knows about.
+        #
+        def get_all_window_titles()
+            return get_string_array("getAllWindowTitles", [])
+        end
+
+
         # Returns the entire HTML source between the opening and
         # closing "html" tags.
         #
@@ -808,6 +1149,57 @@ module Selenium
         # 'position' is the numerical position of the cursor in the field; position should be 0 to move the position to the beginning of the field.  You can also set the cursor to -1 to move it to the end of the field.
         def set_cursor_position(locator,position)
             do_command("setCursorPosition", [locator,position,])
+        end
+
+
+        # Get the relative index of an element to its parent (starting from 0). The comment node and empty text node
+        # will be ignored.
+        #
+        # 'locator' is an element locator pointing to an element
+        def get_element_index(locator)
+            return get_number("getElementIndex", [locator,])
+        end
+
+
+        # Check if these two elements have same parent and are ordered. Two same elements will
+        # not be considered ordered.
+        #
+        # 'locator1' is an element locator pointing to the first element
+        # 'locator2' is an element locator pointing to the second element
+        def is_ordered(locator1,locator2)
+            return get_boolean("isOrdered", [locator1,locator2,])
+        end
+
+
+        # Retrieves the horizontal position of an element
+        #
+        # 'locator' is an element locator pointing to an element OR an element itself
+        def get_element_position_left(locator)
+            return get_number("getElementPositionLeft", [locator,])
+        end
+
+
+        # Retrieves the vertical position of an element
+        #
+        # 'locator' is an element locator pointing to an element OR an element itself
+        def get_element_position_top(locator)
+            return get_number("getElementPositionTop", [locator,])
+        end
+
+
+        # Retrieves the width of an element
+        #
+        # 'locator' is an element locator pointing to an element
+        def get_element_width(locator)
+            return get_number("getElementWidth", [locator,])
+        end
+
+
+        # Retrieves the height of an element
+        #
+        # 'locator' is an element locator pointing to an element
+        def get_element_height(locator)
+            return get_number("getElementHeight", [locator,])
         end
 
 
@@ -897,9 +1289,68 @@ module Selenium
         end
 
 
+        # Return all cookies of the current page under test.
+        #
+        def get_cookie()
+            return get_string("getCookie", [])
+        end
+
+
+        # Create a new cookie whose path and domain are same with those of current page
+        # under test, unless you specified a path for this cookie explicitly.
+        #
+        # 'nameValuePair' is name and value of the cookie in a format "name=value"
+        # 'optionsString' is options for the cookie. Currently supported options include 'path' and 'max_age'.      the optionsString's format is "path=/path/, max_age=60". The order of options are irrelevant, the unit      of the value of 'max_age' is second.
+        def create_cookie(nameValuePair,optionsString)
+            do_command("createCookie", [nameValuePair,optionsString,])
+        end
+
+
+        # Delete a named cookie with specified path.
+        #
+        # 'name' is the name of the cookie to be deleted
+        # 'path' is the path property of the cookie to be deleted
+        def delete_cookie(name,path)
+            do_command("deleteCookie", [name,path,])
+        end
+
+
     end
+
+    SeleneseInterpreter = SeleniumDriver # for backward compatibility
 
 end
 
 class SeleniumCommandError < RuntimeError 
+end
+
+# Defines a mixin module that you can use to write Selenium tests
+# without typing "@selenium." in front of every command.  Every
+# call to a missing method will be automatically sent to the @selenium
+# object.
+module SeleniumHelper
+    
+    # Overrides standard "open" method with @selenium.open
+    def open(addr)
+      @selenium.open(addr)
+    end
+    
+    # Overrides standard "type" method with @selenium.type
+    def type(inputLocator, value)
+      @selenium.type(inputLocator, value)
+    end
+    
+    # Overrides standard "select" method with @selenium.select
+    def select(inputLocator, optionLocator)
+      @selenium.select(inputLocator, optionLocator)
+    end
+
+    # Passes all calls to missing methods to @selenium
+    def method_missing(method_name, *args)
+        if args.empty?
+            @selenium.send(method_name)
+        else
+            @selenium.send(method_name, *args)
+        end
+    end
 end

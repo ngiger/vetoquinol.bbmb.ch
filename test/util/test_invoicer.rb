@@ -18,6 +18,11 @@ module BBMB
 class TestInvoicer < Test::Unit::TestCase
   include FlexMock::TestCase
   def setup
+    key = OpenSSL::PKey::DSA.new(512)
+    keypath = File.expand_path('../data/private_key', 
+                               File.dirname(__FILE__))
+    File.open(keypath, 'w') { |fh| fh.puts(key) }
+    YDIM::Client::CONFIG.private_key = keypath
     BBMB.config = flexmock('config')
     @ydim_server = flexmock('ydim')
     @ydim_url = 'druby://localhost:10082'

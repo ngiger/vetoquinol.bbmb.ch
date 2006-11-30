@@ -117,6 +117,8 @@ class TestCurrentOrder < Test::Unit::TestCase
     }
     @selenium.click "commit"
     @selenium.wait_for_page_to_load "30000"
+    assert @selenium.is_text_present("Ihre Bestellung wurde an die Vétoquinol AG versandt.")
+    @selenium.wait_for_page_to_load "30000"
     assert_equal "BBMB | Home", @selenium.get_title
     assert @selenium.is_text_present("Aktuelle Bestellung: 0 Positionen")
     @selenium.click "link=Archiv"
