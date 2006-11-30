@@ -2,6 +2,7 @@
 # Html::State::CurrentOrder -- bbmb.ch -- 20.09.2006 -- hwyss@ywesee.com
 
 require 'bbmb/html/state/global'
+require 'bbmb/html/state/info'
 require 'bbmb/html/state/json'
 require 'bbmb/html/view/current_order'
 require 'bbmb/util/mail'
@@ -33,7 +34,7 @@ class CurrentOrder < Global
     _customer.commit_order!
     BBMB::Util::Mail.send_order(@model)
     @model = _customer.current_order
-    self
+    Info.new(@session, :message => :order_sent, :event => :current_order)
   end
   def do_update
     @model = _customer.current_order

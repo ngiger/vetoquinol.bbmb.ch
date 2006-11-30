@@ -34,6 +34,12 @@ div#divider {
 div#head img {
 	margin-bottom: 43px;
 }
+div.info {
+  padding: 12px 4px;
+  font-size: 14px;
+  font-weight: bold;
+	background-color: #EAEDEF;
+}
 div#info td {
   vertical-align: top;
 }

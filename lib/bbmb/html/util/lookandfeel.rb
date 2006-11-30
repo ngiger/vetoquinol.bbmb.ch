@@ -81,6 +81,7 @@ class Lookandfeel < SBSM::Lookandfeel
       :order                    =>  "Archiv - Bestellung",
       :orders                   =>  "Archiv",
       :order_product            =>  "Zu Bestellung hinzufügen",
+      :order_sent               =>  "Ihre Bestellung wurde an die Vétoquinol AG versandt.",
       :order_total              =>  "Total Sfr. ",
       :order_transfer           =>  "Datei zu Best.",
       :organisation             =>  "Kunde",
