@@ -2,6 +2,7 @@
 # Persistence::ODBA -- bbmb.ch -- 14.09.2006 -- hwyss@ywesee.com
 
 require 'bbmb/config'
+require 'odba'
 require 'odba/connection_pool'
 require 'odba/drbwrapper'
 require 'bbmb/persistence/odba/model/customer'
