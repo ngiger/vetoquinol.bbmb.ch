@@ -23,9 +23,10 @@ class Validator < SBSM::Validator
   FILES = [ :file_chooser ]
   NUMERIC = [ :comport, :customer_id, :EAN_13, :index, :plz, :priority,
     :quantity ]
-  STRINGS = [ :address1, :address2, :address3, :comment, :drtitle, :fax,
-    :filter, :firstname, :lastname, :order_id, :organisation, :phone_business,
-    :phone_mobile, :phone_private, :query, :reference, :sortvalue ]
+  STRINGS = [ :address1, :address2, :address3, :city, :comment,
+    :drtitle, :fax, :filter, :firstname, :lastname, :order_id,
+    :organisation, :phone_business, :phone_mobile, :phone_private,
+    :query, :reference, :sortvalue ]
   def ean13(value)
     return nil if(value.empty?)
     match = /\d{13}/.match(value.to_s)
