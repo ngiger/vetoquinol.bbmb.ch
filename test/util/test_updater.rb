@@ -6,6 +6,7 @@ $: << File.expand_path('../../lib', File.dirname(__FILE__))
 
 require 'test/unit'
 require 'bbmb/util/updater'
+require 'bbmb/util/csv_importer'
 require 'stub/persistence'
 require 'flexmock'
 
@@ -13,6 +14,14 @@ module BBMB
   module Util
     class TestUpdater < Test::Unit::TestCase
       include FlexMock::TestCase
+      def setup
+        BBMB.config = config = flexmock('Config')
+        importers = {
+          'ywsarti.csv' => 'ProductImporter',
+          'ywskund.csv' => 'CustomerImporter',
+        }
+        config.should_receive(:importers).and_return(importers)
+      end
       def test_import_customers
         BBMB.logger = flexmock("logger")
         BBMB.logger.should_ignore_missing
@@ -24,7 +33,7 @@ module BBMB
           }
           importer
         }
-        Updater.import_customers("data")
+        Updater.import("CustomerImporter", "data")
       end
       def test_import_products
         BBMB.logger = flexmock("logger")
@@ -37,11 +46,12 @@ module BBMB
           }
           importer
         }
-        Updater.import_products("data")
+        Updater.import("ProductImporter", "data")
       end
       def test_run__ywskund_csv
-        flexstub(Updater).should_receive(:import_customers).times(1).and_return { 
-          |data, prs|
+        flexstub(Updater).should_receive(:import).times(1).and_return { 
+          |importer, data, prs|
+          assert_equal("CustomerImporter", importer)
           assert_equal("mockdata", data)
         }
         flexstub(PollingManager).should_receive(:new).and_return { 
@@ -54,8 +64,9 @@ module BBMB
         Updater.run
       end
       def test_run__ywsarti_csv
-        flexstub(Updater).should_receive(:import_products).times(1).and_return { 
-          |data, prs|
+        flexstub(Updater).should_receive(:import).times(1).and_return { 
+          |importer, data, prs|
+          assert_equal("ProductImporter", importer)
           assert_equal("mockdata", data)
         }
         flexstub(PollingManager).should_receive(:new).and_return { 

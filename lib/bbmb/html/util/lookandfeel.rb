@@ -134,6 +134,7 @@ class Lookandfeel < SBSM::Lookandfeel
       :th_last_login            =>  "Letztes Login",
       :th_order_count           =>  "Best.",
       :th_price                 =>  "Preis",
+      :th_price_base            =>  "Preis",
       :th_price_levels          =>  'Staffelpreise',
       :th_quantity              =>  'Menge', 
       :th_order_total           =>  "Endpreis",

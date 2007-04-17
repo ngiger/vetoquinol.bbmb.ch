@@ -1,10 +1,12 @@
 #!/usr/bin/env ruby
 # Selenium::TestCase -- bbmb.ch -- 22.09.2006 -- hwyss@ywesee.com
 
+$: << File.expand_path('../../lib', File.dirname(__FILE__))
+
 if(pid = Kernel.fork)
   at_exit {
     Process.kill('HUP', pid)
-    #$selenium.stop if($selenium.respond_to?(:stop))
+    $selenium.stop if($selenium.respond_to?(:stop))
   }
 else
   path = File.expand_path('selenium-server.jar', File.dirname(__FILE__))
@@ -21,7 +23,7 @@ module BBMB
 class SeleniumWrapper < SimpleDelegator
   def initialize(host, port, browser, server, port2)
     @server = server
-    @selenium = ::Selenium::SeleneseInterpreter.new(host, port, browser, 
+    @selenium = ::Selenium::SeleneseInterpreter.new(host, port, browser,
                                                     server, port2)
     super @selenium
   end
