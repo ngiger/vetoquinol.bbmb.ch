@@ -127,6 +127,43 @@ class TestCurrentOrder < Test::Unit::TestCase
     assert @selenium.is_text_present(Date.today.strftime('%d.%m.%Y'))
     assert @selenium.is_text_present("202.50")
   end
+  def test_current_order__commit__error
+    BBMB.persistence.should_ignore_missing
+    product = Model::Product.new('12345')
+    product.description = 'product - a description'
+    product.price = Util::Money.new(11.50)
+    product.l1_price = Util::Money.new(12.50)
+    product.l1_qty = 2
+    product.l2_price = Util::Money.new(13.50)
+    product.l2_qty = 3
+    email = 'test.customer@bbmb.ch'
+    customer = Model::Customer.new('007')
+    customer.instance_variable_set('@email', email)
+    current = customer.current_order
+    current.add(15, product)
+    user = login_customer(customer)
+    assert_equal "BBMB | Home", @selenium.get_title
+    assert @selenium.is_text_present("Aktuelle Bestellung: 1 Positionen")
+    assert @selenium.is_text_present("Sie sind angemeldet als test.customer@bbmb.ch")
+    assert @selenium.is_element_present("commit")
+    assert_equal "Bestellung auslösen", @selenium.get_value("commit")
+    mail = flexstub(BBMB::Util::Mail)
+    mail.should_receive(:send_order).and_return { |order|
+      raise "some error"
+    }
+    mail.should_receive(:notify_error).with(RuntimeError).times(1)
+    @selenium.click "commit"
+    @selenium.wait_for_page_to_load "30000"
+    assert @selenium.is_text_present("Beim Versand Ihrer Bestellung ist ein Problem aufgetreten.\nEin Administrator wurde automatisch darüber informiert und wird mit Ihnen Kontakt aufnehmen.")
+    @selenium.wait_for_page_to_load "30000"
+    assert_equal "BBMB | Home", @selenium.get_title
+    assert @selenium.is_text_present("Aktuelle Bestellung: 0 Positionen")
+    @selenium.click "link=Archiv"
+    @selenium.wait_for_page_to_load "30000"
+    assert_equal "BBMB | Archiv", @selenium.get_title
+    assert @selenium.is_text_present(Date.today.strftime('%d.%m.%Y'))
+    assert @selenium.is_text_present("202.50")
+  end
   def test_current_order__transfer_dat
     datadir = File.expand_path('data', File.dirname(__FILE__))
     BBMB.persistence.should_ignore_missing

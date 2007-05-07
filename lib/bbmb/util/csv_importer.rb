@@ -65,7 +65,7 @@ module BBMB
         2		=>	:ean13,
         3		=>	:description,
         5		=>	:price,
-        14	=>	:mwst,
+        14	=>	:vat,
         27	=>	:pcode,
         28	=>	:l1_qty,   # Staffelpreise, Stück 1
         29	=>	:l1_price, # Staffelpreise, Preis 1

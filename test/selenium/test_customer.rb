@@ -20,68 +20,68 @@ class TestCustomer < Test::Unit::TestCase
       [customer]
     }
     user = login_admin
-    @selenium.click "link=Test-Customer"
-    @selenium.wait_for_page_to_load "30000"
-    assert_equal "BBMB | Kunde", @selenium.get_title
+    click "link=Test-Customer"
+    wait_for_page_to_load "30000"
+    assert_equal "BBMB | Kunde", get_title
 
-    assert_equal "Kunde*", @selenium.get_text("//label[@for='organisation']")
-    assert @selenium.is_element_present("organisation")
-    assert_equal "Test-Customer", @selenium.get_value("organisation")
+    assert_equal "Kunde*", get_text("//label[@for='organisation']")
+    assert is_element_present("organisation")
+    assert_equal "Test-Customer", get_value("organisation")
 
-    assert_equal "Kundennr*", @selenium.get_text("//label[@for='customer_id']")
-    assert @selenium.is_element_present("customer_id")
-    assert_equal "007", @selenium.get_value("customer_id")
+    assert_equal "Kundennr*", get_text("//label[@for='customer_id']")
+    assert is_element_present("customer_id")
+    assert_equal "007", get_value("customer_id")
 
-    assert_equal "EAN-Code", @selenium.get_text("//label[@for='ean13']")
-    assert @selenium.is_element_present("ean13")
+    assert_equal "EAN-Code", get_text("//label[@for='ean13']")
+    assert is_element_present("ean13")
 
-    assert_equal "Umsatz", @selenium.get_text("//label[@for='turnaround']")
-    assert @selenium.is_element_present("link=Sfr. 0.00")
+    assert_equal "Umsatz", get_text("//label[@for='turnaround']")
+    assert is_element_present("link=Sfr. 0.00")
     url = "http://localhost:10080/de/orders/customer_id/007"
-    assert_equal url, @selenium.get_attribute("//a[@name='turnaround']@href")
+    assert_equal url, get_attribute("//a[@name='turnaround']@href")
 
-    assert @selenium.is_element_present("link=Umsatz")
-    assert @selenium.is_text_present("Sfr. 0.00 - Umsatz")
-    assert_equal "Anrede", @selenium.get_text("//label[@for='title']")
-    assert @selenium.is_element_present("title")
-    assert_equal "Titel", @selenium.get_text("//label[@for='drtitle']")
-    assert @selenium.is_element_present("drtitle")
-    assert_equal "Name", @selenium.get_text("//label[@for='lastname']")
-    assert @selenium.is_element_present("lastname")
-    assert_equal "Vorname", @selenium.get_text("//label[@for='firstname']")
-    assert @selenium.is_element_present("firstname")
-    assert_equal "Adresse*", @selenium.get_text("//label[@for='address1']")
-    assert @selenium.is_element_present("address1")
-    assert @selenium.is_element_present("address2")
-    assert @selenium.is_element_present("address3")
-    assert_equal "PLZ", @selenium.get_text("//label[@for='plz']")
-    assert @selenium.is_element_present("plz")
-    assert_equal "Ort", @selenium.get_text("//label[@for='city']")
-    assert @selenium.is_element_present("city")
-    assert @selenium.is_text_present("PLZ/Ort")
-    assert_equal "Kanton", @selenium.get_text("//label[@for='canton']")
-    assert @selenium.is_element_present("canton")
+    assert is_element_present("link=Umsatz")
+    assert is_text_present("Sfr. 0.00 - Umsatz")
+    assert_equal "Anrede", get_text("//label[@for='title']")
+    assert is_element_present("title")
+    assert_equal "Titel", get_text("//label[@for='drtitle']")
+    assert is_element_present("drtitle")
+    assert_equal "Name", get_text("//label[@for='lastname']")
+    assert is_element_present("lastname")
+    assert_equal "Vorname", get_text("//label[@for='firstname']")
+    assert is_element_present("firstname")
+    assert_equal "Adresse*", get_text("//label[@for='address1']")
+    assert is_element_present("address1")
+    assert is_element_present("address2")
+    assert is_element_present("address3")
+    assert_equal "PLZ", get_text("//label[@for='plz']")
+    assert is_element_present("plz")
+    assert_equal "Ort", get_text("//label[@for='city']")
+    assert is_element_present("city")
+    assert is_text_present("PLZ/Ort")
+    assert_equal "Kanton", get_text("//label[@for='canton']")
+    assert is_element_present("canton")
 
-    assert_equal "Email*", @selenium.get_text("//label[@for='email']")
-    assert @selenium.is_element_present("email")
-    assert_equal "test.customer@bbmb.ch", @selenium.get_value("email")
+    assert_equal "Email*", get_text("//label[@for='email']")
+    assert is_element_present("email")
+    assert_equal "test.customer@bbmb.ch", get_value("email")
 
-    assert_equal "Tel. Geschäft", @selenium.get_text("//label[@for='phone_business']")
-    assert @selenium.is_element_present("phone_business")
-    assert_equal "Tel. Privat", @selenium.get_text("//label[@for='phone_private']")
-    assert @selenium.is_element_present("phone_private")
-    assert_equal "Tel. Mobile", @selenium.get_text("//label[@for='phone_mobile']")
-    assert @selenium.is_element_present("phone_mobile")
-    assert_equal "Fax", @selenium.get_text("//label[@for='fax']")
-    assert @selenium.is_element_present("fax")
+    assert_equal "Tel. Geschäft", get_text("//label[@for='phone_business']")
+    assert is_element_present("phone_business")
+    assert_equal "Tel. Privat", get_text("//label[@for='phone_private']")
+    assert is_element_present("phone_private")
+    assert_equal "Tel. Mobile", get_text("//label[@for='phone_mobile']")
+    assert is_element_present("phone_mobile")
+    assert_equal "Fax", get_text("//label[@for='fax']")
+    assert is_element_present("fax")
 
-    assert @selenium.is_element_present("change_password")
-    assert @selenium.is_element_present("generate_pass")
-    assert !@selenium.is_element_present("pass")
-    assert !@selenium.is_element_present("confirm_pass")
+    assert is_element_present("change_password")
+    assert is_element_present("generate_pass")
+    assert !is_element_present("pass")
+    assert !is_element_present("confirm_pass")
 
-    assert @selenium.is_element_present("save")
-    assert_equal "Speichern", @selenium.get_value("save")
+    assert is_element_present("save")
+    assert_equal "Speichern", get_value("save")
   end
   def test_customer__save_errors
     BBMB.server = flexmock('server')
@@ -96,34 +96,34 @@ class TestCustomer < Test::Unit::TestCase
       [customer]
     }
     user = login_admin
-    @selenium.click "link=Test-Customer"
-    @selenium.wait_for_page_to_load "30000"
+    click "link=Test-Customer"
+    wait_for_page_to_load "30000"
 
-    @selenium.click "change_password"
-    @selenium.wait_for_page_to_load "30000"
+    click "change_password"
+    wait_for_page_to_load "30000"
 
-    assert @selenium.is_text_present("Das Benutzerprofil wurde nicht gespeichert!")
+    assert is_text_present("Das Benutzerprofil wurde nicht gespeichert!")
 
-    @selenium.type "ean13", "768012345678"
-    @selenium.click "save"
-    @selenium.wait_for_page_to_load "30000"
+    type "ean13", "768012345678"
+    click "save"
+    wait_for_page_to_load "30000"
 
-    assert @selenium.is_text_present("Das Benutzerprofil wurde nicht gespeichert!")
-    assert @selenium.is_text_present("Das Passwort war leer.")
-    assert_equal "error", @selenium.get_attribute("//label[@for='address1']@class")
-    assert_equal "error", @selenium.get_attribute("//label[@for='pass']@class")
-    assert_equal "error", @selenium.get_attribute("//label[@for='confirm_pass']@class")
-    assert_equal "error", @selenium.get_attribute("//label[@for='ean13']@class")
+    assert is_text_present("Das Benutzerprofil wurde nicht gespeichert!")
+    assert is_text_present("Das Passwort war leer.")
+    assert_equal "error", get_attribute("//label[@for='address1']@class")
+    assert_equal "error", get_attribute("//label[@for='pass']@class")
+    assert_equal "error", get_attribute("//label[@for='confirm_pass']@class")
+    assert_equal "error", get_attribute("//label[@for='ean13']@class")
 
-    @selenium.type "address1", "Address"
-    @selenium.type "pass", "secret"
-    @selenium.type "confirm_pass", "terces"
-    @selenium.click "save"
-    @selenium.wait_for_page_to_load "30000"
+    type "address1", "Address"
+    type "pass", "secret"
+    type "confirm_pass", "terces"
+    click "save"
+    wait_for_page_to_load "30000"
 
-    assert @selenium.is_text_present("Das Benutzerprofil wurde nicht gespeichert!")
-    assert @selenium.is_text_present("Das Passwort und die Bestätigung waren nicht identisch.")
-    assert @selenium.is_text_present("Der EAN-Code war ungültig.")
+    assert is_text_present("Das Benutzerprofil wurde nicht gespeichert!")
+    assert is_text_present("Das Passwort und die Bestätigung waren nicht identisch.")
+    assert is_text_present("Der EAN-Code war ungültig.")
   end
   def test_customer__save
     BBMB.server = flexmock('server')
@@ -140,16 +140,16 @@ class TestCustomer < Test::Unit::TestCase
     user = login_admin
     user.should_receive(:get_preference).and_return('')
 
-    @selenium.click "link=Test-Customer"
-    @selenium.wait_for_page_to_load "30000"
+    click "link=Test-Customer"
+    wait_for_page_to_load "30000"
 
-    @selenium.click "change_password"
-    @selenium.wait_for_page_to_load "30000"
+    click "change_password"
+    wait_for_page_to_load "30000"
 
-    @selenium.type "ean13", "7680123456781"
-    @selenium.type "address1", "Address"
-    @selenium.type "pass", "secret"
-    @selenium.type "confirm_pass", "secret"
+    type "ean13", "7680123456781"
+    type "address1", "Address"
+    type "pass", "secret"
+    type "confirm_pass", "secret"
 
     entity = flexmock('yus-entity')
     entity.should_receive(:valid?).and_return(true)
@@ -163,13 +163,13 @@ class TestCustomer < Test::Unit::TestCase
       @yus_entities.store(email, entity)
     }
 
-    @selenium.click "save"
-    @selenium.wait_for_page_to_load "30000"
+    click "save"
+    wait_for_page_to_load "30000"
 
-    assert !@selenium.is_text_present("Das Benutzerprofil wurde nicht gespeichert!")
-    assert @selenium.is_element_present("change_password")
-    assert @selenium.is_element_present("generate_pass")
-    assert_equal "Passwort ändern", @selenium.get_value("change_password")
+    assert !is_text_present("Das Benutzerprofil wurde nicht gespeichert!")
+    assert is_element_present("change_password")
+    assert is_element_present("generate_pass")
+    assert_equal "Passwort ändern", get_value("change_password")
   end
   def test_customer__duplicate_email
     BBMB.server = flexmock('server')
@@ -188,25 +188,25 @@ class TestCustomer < Test::Unit::TestCase
     user = login_admin
     user.should_receive(:get_preference).and_return('')
 
-    @selenium.click "link=Test-Customer"
-    @selenium.wait_for_page_to_load "30000"
+    click "link=Test-Customer"
+    wait_for_page_to_load "30000"
 
-    @selenium.click "change_password"
-    @selenium.wait_for_page_to_load "30000"
+    click "change_password"
+    wait_for_page_to_load "30000"
 
-    @selenium.type "email", "test.user@bbmb.ch"
-    @selenium.type "address1", "Address"
-    @selenium.type "pass", "secret"
-    @selenium.type "confirm_pass", "secret"
+    type "email", "test.user@bbmb.ch"
+    type "address1", "Address"
+    type "pass", "secret"
+    type "confirm_pass", "secret"
 
     entity = flexmock('yus-entity')
     entity.should_receive(:valid?).and_return(true)
 
-    @selenium.click "save"
-    @selenium.wait_for_page_to_load "30000"
+    click "save"
+    wait_for_page_to_load "30000"
 
-    assert @selenium.is_text_present("Das Benutzerprofil wurde nicht gespeichert!")
-    assert @selenium.is_text_present("Es gibt bereits ein Benutzerprofil für diese Email-Adresse")
+    assert is_text_present("Das Benutzerprofil wurde nicht gespeichert!")
+    assert is_text_present("Es gibt bereits ein Benutzerprofil für diese Email-Adresse")
   end
   def test_customer__password_not_set
     BBMB.server = flexmock('server')
@@ -227,25 +227,25 @@ class TestCustomer < Test::Unit::TestCase
       raise Yus::YusError, 'other error, user not found, privilege problem'
     }
 
-    @selenium.click "link=Test-Customer"
-    @selenium.wait_for_page_to_load "30000"
+    click "link=Test-Customer"
+    wait_for_page_to_load "30000"
 
-    @selenium.click "change_password"
-    @selenium.wait_for_page_to_load "30000"
+    click "change_password"
+    wait_for_page_to_load "30000"
 
-    @selenium.type "email", "test.user@bbmb.ch"
-    @selenium.type "address1", "Address"
-    @selenium.type "pass", "secret"
-    @selenium.type "confirm_pass", "secret"
+    type "email", "test.user@bbmb.ch"
+    type "address1", "Address"
+    type "pass", "secret"
+    type "confirm_pass", "secret"
 
     entity = flexmock('yus-entity')
     entity.should_receive(:valid?).and_return(true)
 
-    @selenium.click "save"
-    @selenium.wait_for_page_to_load "30000"
+    click "save"
+    wait_for_page_to_load "30000"
 
-    assert @selenium.is_text_present("Das Benutzerprofil wurde nicht gespeichert!")
-    assert @selenium.is_text_present("Das Passwort konnte nicht gespeichert werden")
+    assert is_text_present("Das Benutzerprofil wurde nicht gespeichert!")
+    assert is_text_present("Das Passwort konnte nicht gespeichert werden")
   end
   def test_customer__generate_pass
     BBMB.server = flexmock('server')
@@ -272,8 +272,8 @@ class TestCustomer < Test::Unit::TestCase
     entity.should_receive(:valid?).and_return(true)
     @yus_entities.store(customer.email, entity)
 
-    @selenium.click "link=Test-Customer"
-    @selenium.wait_for_page_to_load "30000"
+    click "link=Test-Customer"
+    wait_for_page_to_load "30000"
 
     flexstub(Util::PasswordGenerator).should_receive(:generate).and_return 'pass'
 
@@ -283,26 +283,80 @@ class TestCustomer < Test::Unit::TestCase
       @yus_entities.store(email, entity)
     }
 
-    @selenium.click "generate_pass"
-    @selenium.wait_for_page_to_load "30000"
+    click "generate_pass"
+    wait_for_page_to_load "30000"
+    wait_for_page_to_load "30000"
 
 =begin # selecting a window opened by onload does not seem to work.
-    @selenium.select_window('password')
-    assert_equal "BBMB | Kunde", @selenium.get_title
-    assert @selenium.is_text_present("Test-Customer")
-    assert @selenium.is_text_present("Dr. med. vet. firstname lastname")
-    assert @selenium.is_text_present("Address")
-    assert @selenium.is_text_present("7777")
-    assert @selenium.is_text_present("pass")
-    assert @selenium.is_text_present("test.customer@bbmb.ch")
-    @selenium.close
+    select_window('password')
+    assert_equal "BBMB | Kunde", get_title
+    assert is_text_present("Test-Customer")
+    assert is_text_present("Dr. med. vet. firstname lastname")
+    assert is_text_present("Address")
+    assert is_text_present("7777")
+    assert is_text_present("pass")
+    assert is_text_present("test.customer@bbmb.ch")
+    close
 =end
 
-    @selenium.select_window("null")
-    assert !@selenium.is_text_present("Das Benutzerprofil wurde nicht gespeichert!")
-    assert @selenium.is_element_present("change_password")
-    assert(@selenium.is_element_present("generate_pass") \
-           || @selenium.is_element_present("show_pass"))
+    select_window("null")
+    assert !is_text_present("Das Benutzerprofil wurde nicht gespeichert!")
+    assert is_element_present("change_password")
+    assert(is_element_present("generate_pass") \
+           || is_element_present("show_pass"))
+  end
+  def test_customer__generate_pass__errors
+    BBMB.server = flexmock('server')
+    BBMB.server.should_ignore_missing
+    BBMB.persistence.should_ignore_missing
+    customer = BBMB::Model::Customer.new('007')
+    customer.organisation = 'Test-Customer'
+    customer.drtitle = 'Dr. med. vet.'
+    customer.firstname = 'firstname'
+    customer.lastname = 'lastname'
+    customer.plz = '7777'
+    customer.city = 'city'
+    customer.ean13 = "7680123456781"
+    customer.address1 = "Address"
+    @persistence.should_receive(:all).and_return { |klass|
+      assert_equal(BBMB::Model::Customer, klass)
+      [customer]
+    }
+
+    user = login_admin
+    user.should_receive(:get_preference).and_return('')
+    entity = flexmock('yus-entity')
+    entity.should_receive(:valid?).and_return(true)
+    @yus_entities.store(customer.email, entity)
+
+    click "link=Test-Customer"
+    wait_for_page_to_load "30000"
+
+    click "generate_pass"
+    wait_for_page_to_load "30000"
+
+    assert is_text_present("Das Benutzerprofil wurde nicht gespeichert!")
+    assert is_text_present("Bitte speichern Sie zuerst eine gültige Email-Adresse")
+    assert is_element_present("change_password")
+    assert(is_element_present("generate_pass") \
+           || is_element_present("show_pass"))
+
+
+    BBMB.server.should_receive(:rename_user).and_return { |old, new|
+      raise Yus::YusError, 'duplicate email'
+    }
+
+    flexstub(Util::PasswordGenerator).should_receive(:generate).and_return 'pass'
+    user.should_receive(:set_password).times(1).and_return { |email, hash|
+      raise Yus::YusError
+    }
+
+    type 'email', 'test.customer@bbmb.ch'
+    customer.instance_variable_set('@email', 'test.customer@bbmb.ch')
+    click "generate_pass"
+    wait_for_page_to_load "30000"
+
+    assert is_text_present("Das Passwort konnte nicht gespeichert werden")
   end
 end
   end

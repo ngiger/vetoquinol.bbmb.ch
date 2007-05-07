@@ -65,6 +65,7 @@ module BBMB
   module Selenium
 module TestCase
   include FlexMock::TestCase
+  include SeleniumHelper
   def setup
     Model::Customer.clear_instances
     Model::Product.clear_instances

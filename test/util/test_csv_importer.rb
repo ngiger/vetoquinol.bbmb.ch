@@ -129,7 +129,7 @@ gesperrt;0313720;;Marbocyl 10% sol 50ml ch;;8.6500;;;;;;;;;3;;;;;;;;;;;VETOQU;11
           assert_equal("gesperrt", product.status)
           assert_nil(product.ean13)
           assert_equal("Marbocyl 10% sol 50ml ch", product.description)
-          assert_equal(3, product.mwst)
+          assert_equal(3, product.vat)
           assert_nil(product.pcode)
           assert_equal(0, product.l1_qty)
           assert_equal(nil, product.l1_price)

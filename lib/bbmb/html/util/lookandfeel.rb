@@ -80,6 +80,10 @@ class Lookandfeel < SBSM::Lookandfeel
       :nullify                  =>  "Alles auf 0 setzen",
       :order                    =>  "Archiv - Bestellung",
       :orders                   =>  "Archiv",
+      :order_problem            =>  <<-EOS,
+Beim Versand Ihrer Bestellung ist ein Problem aufgetreten.
+Ein Administrator wurde automatisch darüber informiert und wird mit Ihnen Kontakt aufnehmen.
+      EOS
       :order_product            =>  "Zu Bestellung hinzufügen",
       :order_sent               =>  "Ihre Bestellung wurde an die Vétoquinol AG versandt.",
       :order_total              =>  "Total Sfr. ",
