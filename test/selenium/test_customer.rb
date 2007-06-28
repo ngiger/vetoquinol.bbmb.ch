@@ -75,7 +75,7 @@ class TestCustomer < Test::Unit::TestCase
     assert_equal "Fax", get_text("//label[@for='fax']")
     assert is_element_present("fax")
 
-    assert is_element_present("change_password")
+    assert is_element_present("change_pass")
     assert is_element_present("generate_pass")
     assert !is_element_present("pass")
     assert !is_element_present("confirm_pass")
@@ -99,7 +99,7 @@ class TestCustomer < Test::Unit::TestCase
     click "link=Test-Customer"
     wait_for_page_to_load "30000"
 
-    click "change_password"
+    click "change_pass"
     wait_for_page_to_load "30000"
 
     assert is_text_present("Das Benutzerprofil wurde nicht gespeichert!")
@@ -143,7 +143,7 @@ class TestCustomer < Test::Unit::TestCase
     click "link=Test-Customer"
     wait_for_page_to_load "30000"
 
-    click "change_password"
+    click "change_pass"
     wait_for_page_to_load "30000"
 
     type "ean13", "7680123456781"
@@ -167,9 +167,9 @@ class TestCustomer < Test::Unit::TestCase
     wait_for_page_to_load "30000"
 
     assert !is_text_present("Das Benutzerprofil wurde nicht gespeichert!")
-    assert is_element_present("change_password")
+    assert is_element_present("change_pass")
     assert is_element_present("generate_pass")
-    assert_equal "Passwort ändern", get_value("change_password")
+    assert_equal "Passwort ändern", get_value("change_pass")
   end
   def test_customer__duplicate_email
     BBMB.server = flexmock('server')
@@ -191,7 +191,7 @@ class TestCustomer < Test::Unit::TestCase
     click "link=Test-Customer"
     wait_for_page_to_load "30000"
 
-    click "change_password"
+    click "change_pass"
     wait_for_page_to_load "30000"
 
     type "email", "test.user@bbmb.ch"
@@ -230,7 +230,7 @@ class TestCustomer < Test::Unit::TestCase
     click "link=Test-Customer"
     wait_for_page_to_load "30000"
 
-    click "change_password"
+    click "change_pass"
     wait_for_page_to_load "30000"
 
     type "email", "test.user@bbmb.ch"
@@ -301,7 +301,7 @@ class TestCustomer < Test::Unit::TestCase
 
     select_window("null")
     assert !is_text_present("Das Benutzerprofil wurde nicht gespeichert!")
-    assert is_element_present("change_password")
+    assert is_element_present("change_pass")
     assert(is_element_present("generate_pass") \
            || is_element_present("show_pass"))
   end
@@ -337,7 +337,7 @@ class TestCustomer < Test::Unit::TestCase
 
     assert is_text_present("Das Benutzerprofil wurde nicht gespeichert!")
     assert is_text_present("Bitte speichern Sie zuerst eine gültige Email-Adresse")
-    assert is_element_present("change_password")
+    assert is_element_present("change_pass")
     assert(is_element_present("generate_pass") \
            || is_element_present("show_pass"))
 

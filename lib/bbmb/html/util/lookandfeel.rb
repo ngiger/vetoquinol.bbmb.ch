@@ -18,7 +18,7 @@ class Lookandfeel < SBSM::Lookandfeel
       :barcode_usb              =>  "Download USB-Treiber",
       :barcode_wait             =>  "Einen Moment, bitte...",
       :canton                   =>  "Kanton",
-      :change_password          =>  "Passwort ändern",
+      :change_pass              =>  "Passwort ändern",
       :clear_favorites          =>  "Schnellb. löschen",
       :clear_favorites_confirm  =>  "Wollen Sie wirklich die gesamte Schnellbestellung löschen?",
       :clear_order              =>  "Bestellung löschen",
