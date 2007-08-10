@@ -24,7 +24,10 @@ module BBMB
           persistence.save(object)
           count += 1
         }
+        postprocess(persistence)
         count
+      end
+      def postprocess(persistence=BBMB.persistence)
       end
       def string(str)
         str = u(Iconv.new('utf-8', 'latin1').iconv(str.to_s)).strip
@@ -82,14 +85,32 @@ module BBMB
         40	=>	:partner_index, # Partner-Index
         41	=>	:backorder, # Rückstand-Flag
       }
+      def initialize
+        @active_products = {}
+        super
+      end
       def import_record(record)
         article_number = string(record[1])
+        @active_products.store(article_number, true)
         product = Model::Product.find_by_article_number(article_number) \
           || Model::Product.new(article_number)
         PRODUCT_MAP.each { |idx, name|
-          product.send("#{name}=", string(record[idx]))
+          value = string(record[idx])
+          case name
+          when :description
+            product.description.de = value
+          else
+            product.send("#{name}=", value)
+          end
         }
         product
+      end
+      def postprocess(persistence=BBMB.persistence)
+        persistence.all(BBMB::Model::Product) { |product|
+          unless(@active_products.include?(product.article_number))
+            persistence.delete(product) 
+          end
+        }
       end
     end
   end

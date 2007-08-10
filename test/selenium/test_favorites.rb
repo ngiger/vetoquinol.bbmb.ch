@@ -30,7 +30,7 @@ class TestFavorites < Test::Unit::TestCase
   def test_favorites__with_position
     BBMB.persistence.should_ignore_missing
     product = Model::Product.new('12345')
-    product.description = 'product - a description'
+    product.description.de = 'product - a description'
     product.price = Util::Money.new(11.50)
     product.l1_price = Util::Money.new(12.50)
     product.l1_qty = 2
@@ -99,10 +99,10 @@ class TestFavorites < Test::Unit::TestCase
     File.open(path, 'w') { |fh| fh.puts src }
 
     prod1 = Model::Product.new('1')
-    prod1.description = 'product - by pcode'
+    prod1.description.de = 'product - by pcode'
     prod1.price = Util::Money.new(11.50)
     prod2 = Model::Product.new('2')
-    prod2.description = 'product - by ean13'
+    prod2.description.de = 'product - by ean13'
     prod2.price = Util::Money.new(21.50)
 
     prodclass = flexstub(Model::Product)
@@ -147,13 +147,13 @@ class TestFavorites < Test::Unit::TestCase
     customer = BBMB::Model::Customer.new('007')
     customer.instance_variable_set('@email', 'test.customer@bbmb.ch')
     product1 = BBMB::Model::Product.new('1')
-    product1.description = "Product 1"
+    product1.description.de = "Product 1"
     product1.price = Util::Money.new(11.10)
     product2 = BBMB::Model::Product.new('2')
-    product2.description = "Product 2"
+    product2.description.de = "Product 2"
     product2.price = Util::Money.new(12.20)
     product3 = BBMB::Model::Product.new('3')
-    product3.description = "Product 3"
+    product3.description.de = "Product 3"
     product3.price = Util::Money.new(13.30)
     order = customer.current_order
     order.add(2, product1)
@@ -195,7 +195,7 @@ class TestFavorites < Test::Unit::TestCase
     assert @selenium.is_text_present("Aktuelle Schnellbest.: 0 Positionen")
 
     prod1 = Model::Product.new('1')
-    prod1.description = 'product 1'
+    prod1.description.de = 'product 1'
     prod1.price = Util::Money.new(11.50)
     prodclass = flexstub(Model::Product)
     prodclass.should_receive(:find_by_ean13).and_return { |ean13|
@@ -219,7 +219,7 @@ class TestFavorites < Test::Unit::TestCase
   def test_favorites__backorder
     BBMB.persistence.should_ignore_missing
     product = Model::Product.new('12345')
-    product.description = 'product - a description'
+    product.description.de = 'product - a description'
     product.price = Util::Money.new(11.50)
     product.l1_price = Util::Money.new(12.50)
     product.l1_qty = 2

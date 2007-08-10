@@ -34,7 +34,7 @@ class TestFavoritesResult < Test::Unit::TestCase
     assert_equal "BBMB | Schnellbestellung", @selenium.get_title
 
     product = Model::Product.new('12345')
-    product.description = 'product - a description'
+    product.description.de = 'product - a description'
     product.price = Util::Money.new(12.50)
     flexstub(Model::Product).should_receive(:search_by_description).times(1).and_return { 
       |query|
@@ -60,7 +60,7 @@ class TestFavoritesResult < Test::Unit::TestCase
     assert_equal "BBMB | Schnellbestellung", @selenium.get_title
 
     product = Model::Product.new('12345')
-    product.description = 'product - a description'
+    product.description.de = 'product - a description'
     product.price = Util::Money.new(12.50)
     product.backorder = true
     flexstub(Model::Product).should_receive(:search_by_description).times(1).and_return { 

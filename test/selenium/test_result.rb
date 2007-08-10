@@ -27,7 +27,7 @@ class TestResult < Test::Unit::TestCase
   def test_result__1
     user = login_customer
     product = Model::Product.new('12345')
-    product.description = 'product - a description'
+    product.description.de = 'product - a description'
     product.price = Util::Money.new(12.50)
     flexstub(Model::Product).should_receive(:search_by_description).times(1).and_return { 
       |query|
@@ -49,7 +49,7 @@ class TestResult < Test::Unit::TestCase
     BBMB.persistence.should_ignore_missing
     user = login_customer
     product = Model::Product.new('12345')
-    product.description = 'product - a description'
+    product.description.de = 'product - a description'
     product.price = Util::Money.new(11.50)
     flexstub(Model::Product).should_receive(:search_by_description).times(1).and_return { 
       |query|
@@ -73,7 +73,7 @@ class TestResult < Test::Unit::TestCase
   def test_result__backorder
     user = login_customer
     product = Model::Product.new('12345')
-    product.description = 'product - a description'
+    product.description.de = 'product - a description'
     product.price = Util::Money.new(12.50)
     product.backorder = true
     flexstub(Model::Product).should_receive(:search_by_description).times(1).and_return { 
@@ -91,10 +91,10 @@ class TestResult < Test::Unit::TestCase
   def test_result__sort
     user = login_customer
     product1 = Model::Product.new('12345')
-    product1.description = 'product 1'
+    product1.description.de = 'product 1'
     product1.price = Util::Money.new(12.50)
     product2 = Model::Product.new('12345')
-    product2.description = 'product 2'
+    product2.description.de = 'product 2'
     product2.price = Util::Money.new(10.50)
     flexstub(Model::Product).should_receive(:search_by_description).times(1).and_return { 
       |query|
@@ -125,7 +125,7 @@ class TestResult < Test::Unit::TestCase
     BBMB.persistence.should_ignore_missing
     user = login_customer
     product = Model::Product.new('12345')
-    product.description = 'product - a description'
+    product.description.de = 'product - a description'
     product.price = Util::Money.new(11.50)
     @customer.current_order.add(5, product)
     flexstub(Model::Product).should_receive(:search_by_description).times(1).and_return { 

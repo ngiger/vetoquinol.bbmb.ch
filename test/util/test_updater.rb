@@ -33,7 +33,7 @@ module BBMB
           }
           importer
         }
-        Updater.import("CustomerImporter", "data")
+        Updater.import("CustomerImporter", [], "data")
       end
       def test_import_products
         BBMB.logger = flexmock("logger")
@@ -46,11 +46,11 @@ module BBMB
           }
           importer
         }
-        Updater.import("ProductImporter", "data")
+        Updater.import("ProductImporter", [], "data")
       end
       def test_run__ywskund_csv
         flexstub(Updater).should_receive(:import).times(1).and_return { 
-          |importer, data, prs|
+          |importer, args, data|
           assert_equal("CustomerImporter", importer)
           assert_equal("mockdata", data)
         }
@@ -65,7 +65,7 @@ module BBMB
       end
       def test_run__ywsarti_csv
         flexstub(Updater).should_receive(:import).times(1).and_return { 
-          |importer, data, prs|
+          |importer, args, data|
           assert_equal("ProductImporter", importer)
           assert_equal("mockdata", data)
         }

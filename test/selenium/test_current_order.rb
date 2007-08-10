@@ -25,7 +25,7 @@ class TestCurrentOrder < Test::Unit::TestCase
   def test_current_order__with_position
     BBMB.persistence.should_ignore_missing
     product = Model::Product.new('12345')
-    product.description = 'product - a description'
+    product.description.de = 'product - a description'
     product.price = Util::Money.new(11.50)
     product.l1_price = Util::Money.new(12.50)
     product.l1_qty = 2
@@ -93,7 +93,7 @@ class TestCurrentOrder < Test::Unit::TestCase
   def test_current_order__commit
     BBMB.persistence.should_ignore_missing
     product = Model::Product.new('12345')
-    product.description = 'product - a description'
+    product.description.de = 'product - a description'
     product.price = Util::Money.new(11.50)
     product.l1_price = Util::Money.new(12.50)
     product.l1_qty = 2
@@ -130,7 +130,7 @@ class TestCurrentOrder < Test::Unit::TestCase
   def test_current_order__commit__error
     BBMB.persistence.should_ignore_missing
     product = Model::Product.new('12345')
-    product.description = 'product - a description'
+    product.description.de = 'product - a description'
     product.price = Util::Money.new(11.50)
     product.l1_price = Util::Money.new(12.50)
     product.l1_qty = 2
@@ -181,10 +181,10 @@ class TestCurrentOrder < Test::Unit::TestCase
     File.open(path, 'w') { |fh| fh.puts src }
 
     prod1 = Model::Product.new('1')
-    prod1.description = 'product - by pcode'
+    prod1.description.de = 'product - by pcode'
     prod1.price = Util::Money.new(11.50)
     prod2 = Model::Product.new('2')
-    prod2.description = 'product - by ean13'
+    prod2.description.de = 'product - by ean13'
     prod2.price = Util::Money.new(21.50)
 
     prodclass = flexstub(Model::Product)
@@ -231,7 +231,7 @@ class TestCurrentOrder < Test::Unit::TestCase
     assert @selenium.is_text_present("Aktuelle Bestellung: 0 Positionen")
 
     prod1 = Model::Product.new('1')
-    prod1.description = 'product 1'
+    prod1.description.de = 'product 1'
     prod1.price = Util::Money.new(11.50)
     prodclass = flexstub(Model::Product)
     prodclass.should_receive(:find_by_ean13).and_return { |ean13|
@@ -256,14 +256,14 @@ class TestCurrentOrder < Test::Unit::TestCase
   def test_current_order__sort
     BBMB.persistence.should_ignore_missing
     product1 = Model::Product.new('12345')
-    product1.description = 'product 1'
+    product1.description.de = 'product 1'
     product1.price = Util::Money.new(11.50)
     product1.l1_price = Util::Money.new(12.50)
     product1.l1_qty = 2
     product1.l2_price = Util::Money.new(13.50)
     product1.l2_qty = 3
     product2 = Model::Product.new('23456')
-    product2.description = 'product 2'
+    product2.description.de = 'product 2'
     product2.price = Util::Money.new(2.50)
     product2.l1_price = Util::Money.new(1.50)
     product2.l1_qty = 2
@@ -304,7 +304,7 @@ class TestCurrentOrder < Test::Unit::TestCase
   def test_current_order__backorder
     BBMB.persistence.should_ignore_missing
     product = Model::Product.new('12345')
-    product.description = 'product - a description'
+    product.description.de = 'product - a description'
     product.backorder = true
     product.price = Util::Money.new(11.50)
     product.l1_price = Util::Money.new(12.50)

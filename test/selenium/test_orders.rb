@@ -20,13 +20,13 @@ class TestOrders < Test::Unit::TestCase
       [customer]
     }
     product1 = BBMB::Model::Product.new('1')
-    product1.description = "Product 1"
+    product1.description.de = "Product 1"
     product1.price = Util::Money.new(11.10)
     product2 = BBMB::Model::Product.new('2')
-    product2.description = "Product 2"
+    product2.description.de = "Product 2"
     product2.price = Util::Money.new(12.20)
     product3 = BBMB::Model::Product.new('3')
-    product3.description = "Product 3"
+    product3.description.de = "Product 3"
     product3.price = Util::Money.new(13.30)
     order = customer.current_order
     order.add(2, product1)

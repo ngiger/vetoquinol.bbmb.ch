@@ -116,6 +116,7 @@ gesperrt;0303688;;Oribiotic pom 10g ch;;0;;;;;;;;;Y;;;;;;;;;;;VETOQU;112;;0;0;0;
         EOS
         persistence = flexmock("persistence")
         persistence.should_receive(:save).times(10).with(Model::Product)
+        persistence.should_receive(:all)
         ProductImporter.new.import(src, persistence)
       end
       def test_import_record
@@ -128,7 +129,7 @@ gesperrt;0313720;;Marbocyl 10% sol 50ml ch;;8.6500;;;;;;;;;3;;;;;;;;;;;VETOQU;11
           assert_equal("0313720", product.article_number)
           assert_equal("gesperrt", product.status)
           assert_nil(product.ean13)
-          assert_equal("Marbocyl 10% sol 50ml ch", product.description)
+          assert_equal("Marbocyl 10% sol 50ml ch", product.description.de)
           assert_equal(3, product.vat)
           assert_nil(product.pcode)
           assert_equal(0, product.l1_qty)
@@ -144,6 +145,7 @@ gesperrt;0313720;;Marbocyl 10% sol 50ml ch;;8.6500;;;;;;;;;3;;;;;;;;;;;VETOQU;11
           assert_equal(0, product.l6_qty)
           assert_equal(nil, product.l6_price)
         }
+        persistence.should_receive(:all)
         ProductImporter.new.import(line, persistence)
       end
       def test_import_record__ean
@@ -156,8 +158,9 @@ gesperrt;0801031;0340117772763;Equi biotin forte 1 kg;;0;;;;;;;;;3;;;;;;;;;;;VET
           assert_equal("0801031", product.article_number)
           assert_equal("gesperrt", product.status)
           assert_equal("0340117772763", product.ean13)
-          assert_equal("Equi biotin forte 1 kg", product.description)
+          assert_equal("Equi biotin forte 1 kg", product.description.de)
         }
+        persistence.should_receive(:all)
         ProductImporter.new.import(line, persistence)
       end
       def test_import_record__quotes
@@ -169,8 +172,28 @@ gesperrt;402750;;Info-Katalog Eq "nor";;0;;;;;;;;;Y;;;;;;;;;;;VETOQU;112;;0;0;0;
           assert_instance_of(Model::Product, product)
           assert_equal("402750", product.article_number)
           assert_equal("gesperrt", product.status)
-          assert_equal("Info-Katalog Eq \"nor\"", product.description)
+          assert_equal("Info-Katalog Eq \"nor\"", product.description.de)
         }
+        persistence.should_receive(:all)
+        ProductImporter.new.import(line, persistence)
+      end
+      def test_import_record__postprocess
+        line = <<-EOS
+gesperrt;402750;;Info-Katalog Eq "nor";;0;;;;;;;;;Y;;;;;;;;;;;VETOQU;112;;0;0;0;0;0;0;0;0;0;0;0;0;;no
+        EOS
+        persistence = flexmock("persistence")
+        persistence.should_receive(:save).and_return { |product|
+          assert_instance_of(Model::Product, product)
+          assert_equal("402750", product.article_number)
+          assert_equal("gesperrt", product.status)
+          assert_equal("Info-Katalog Eq \"nor\"", product.description.de)
+        }
+        delete_me = Model::Product.new('1234')
+        persistence.should_receive(:all).and_return { |klass, block|
+          assert_equal(Model::Product, klass)
+          block.call(delete_me) 
+        }
+        persistence.should_receive(:delete).with(delete_me)
         ProductImporter.new.import(line, persistence)
       end
     end
