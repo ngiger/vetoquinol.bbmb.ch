@@ -35,10 +35,10 @@ class TestCustomer < Test::Unit::TestCase
     assert_equal "EAN-Code", get_text("//label[@for='ean13']")
     assert is_element_present("ean13")
 
-    assert_equal "Umsatz", get_text("//label[@for='turnaround']")
+    assert_equal "Umsatz", get_text("//label[@for='turnover']")
     assert is_element_present("link=Sfr. 0.00")
     url = "http://localhost:10080/de/orders/customer_id/007"
-    assert_equal url, get_attribute("//a[@name='turnaround']@href")
+    assert_equal url, get_attribute("//a[@name='turnover']@href")
 
     assert is_element_present("link=Umsatz")
     assert is_text_present("Sfr. 0.00 - Umsatz")
