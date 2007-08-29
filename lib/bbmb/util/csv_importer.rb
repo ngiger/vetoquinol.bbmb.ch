@@ -20,8 +20,9 @@ module BBMB
         count = 0
         io.each { |line|
           record = line.split(';')
-          object = import_record(record)
-          persistence.save(object)
+          if(object = import_record(record))
+            persistence.save(object)
+          end
           count += 1
         }
         postprocess(persistence)
@@ -90,27 +91,39 @@ module BBMB
         super
       end
       def import_record(record)
-        article_number = string(record[1])
-        @active_products.store(article_number, true)
-        product = Model::Product.find_by_article_number(article_number) \
-          || Model::Product.new(article_number)
-        PRODUCT_MAP.each { |idx, name|
-          value = string(record[idx])
-          case name
-          when :description
-            product.description.de = value
-          else
-            product.send("#{name}=", value)
-          end
-        }
-        product
+        status = string(record[0])
+        unless(status == "gesperrt")
+          article_number = string(record[1])
+          @active_products.store(article_number, true)
+          product = Model::Product.find_by_article_number(article_number) \
+            || Model::Product.new(article_number)
+          PRODUCT_MAP.each { |idx, name|
+            value = string(record[idx])
+            case name
+            when :description
+              product.description.de = value
+            else
+              product.send("#{name}=", value)
+            end
+          }
+          product
+        end
       end
-      def postprocess(persistence=BBMB.persistence)
+      def postprocess(persistence)
+        return if(@active_products.empty?)
+        deletables = []
         persistence.all(BBMB::Model::Product) { |product|
           unless(@active_products.include?(product.article_number))
-            persistence.delete(product) 
+            deletables.push product
           end
         }
+        persistence.all(BBMB::Model::Customer) { |customer|
+          order = customer.current_order
+          deletables.each { |product|
+            order.add(0, product)
+          }
+        }
+        persistence.delete(*deletables) unless(deletables.empty?)
       end
     end
   end
