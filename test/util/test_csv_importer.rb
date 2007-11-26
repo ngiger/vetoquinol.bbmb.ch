@@ -105,17 +105,17 @@ module BBMB
         src = <<-EOS
 gesperrt;0101387;0340096716076;Lacrybiotic pom opht 10g;;0;;;;;;;;;Y;;;;;;;;;;;VETOQU;112;;0;0;0;0;0;0;0;0;0;0;0;0;;yes
 gesperrt;0101904;0340096849529;Neomycine hydroc pom 10g;;0;;;;;;;;;Y;;;;;;;;;;;VETOQU;112;;0;0;0;0;0;0;0;0;0;0;0;0;;yes
-gesperrt;0104203;;Marbocyl 5mg cpr bt100;;0;;;;;;;;;Y;;;;;;;;;;;VETOQU;112;;0;0;0;0;0;0;0;0;0;0;0;0;;no
+geaendert;0104203;;Marbocyl 5mg cpr bt100;;0;;;;;;;;;Y;;;;;;;;;;;VETOQU;112;;0;0;0;0;0;0;0;0;0;0;0;0;;no
 gesperrt;0104313;0340096760657;Marbocyl 10% sol 100ml;;25.5000;;;;;;;;;Y;;;;;;;;;;;VETOQU;112;;0;0;0;0;0;0;0;0;0;0;0;0;;yes
 gesperrt;0300212;;Arthri dog cpr bt40 ch;;0;;;;;;;;;Y;;;;;;;;;;;VETOQU;112;;0;0;0;0;0;0;0;0;0;0;0;0;;no
 gesperrt;0300619;;Calmivet cpr bt40 ch;;0;;;;;;;;;Y;;;;;;;;;;;VETOQU;112;;0;0;0;0;0;0;0;0;0;0;0;0;;no
-gesperrt;0301862;;Energidex sol inj 500ml ch;;0;;;;;;;;;Y;;;;;;;;;;;VETOQU;112;;0;0;0;0;0;0;0;0;0;0;0;0;;no
+geaendert;0301862;;Energidex sol inj 500ml ch;;0;;;;;;;;;Y;;;;;;;;;;;VETOQU;112;;0;0;0;0;0;0;0;0;0;0;0;0;;no
 gesperrt;0302467;;Hydrocortiderm 60g ch;;0;;;;;;;;;Y;;;;;;;;;;;VETOQU;112;;0;0;0;0;0;0;0;0;0;0;0;0;;no
 gesperrt;0303292;;Megecat cpr bt18 ch;;0;;;;;;;;;Y;;;;;;;;;;;VETOQU;112;;0;0;0;0;0;0;0;0;0;0;0;0;;no
 gesperrt;0303688;;Oribiotic pom 10g ch;;0;;;;;;;;;Y;;;;;;;;;;;VETOQU;112;;0;0;0;0;0;0;0;0;0;0;0;0;;no
         EOS
         persistence = flexmock("persistence")
-        persistence.should_receive(:save).times(10).with(Model::Product)
+        persistence.should_receive(:save).times(2).with(Model::Product)
         persistence.should_receive(:all)
         ProductImporter.new.import(src, persistence)
       end

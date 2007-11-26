@@ -203,7 +203,7 @@ class TestCurrentOrder < Test::Unit::TestCase
     @selenium.click "order_transfer"
     @selenium.wait_for_page_to_load "30000"
 
-    assert @selenium.is_text_present("Aktuelle Bestellung: 2 Positionen")
+    assert @selenium.is_text_present("Aktuelle Bestellung: 2 Positionen", "Most likely firefox is blocking Javascript-Fileupload.")
     assert @selenium.is_text_present("product - by pcode")
     assert @selenium.is_text_present("product - by ean13")
     assert @selenium.is_text_present("Unidentifiziertes Produkt (Tramal gtt 10 ml 100 mg/ml, EAN-Code: 7680437880197, Pharmacode: 933022)")
