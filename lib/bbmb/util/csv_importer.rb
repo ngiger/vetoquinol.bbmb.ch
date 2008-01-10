@@ -118,9 +118,10 @@ module BBMB
           end
         }
         persistence.all(BBMB::Model::Customer) { |customer|
-          order = customer.current_order
-          deletables.each { |product|
-            order.add(0, product)
+          [customer.current_order, customer.favorites].each { |order|
+            deletables.each { |product|
+              order.add(0, product)
+            }
           }
         }
         persistence.delete(*deletables) unless(deletables.empty?)
