@@ -154,7 +154,7 @@ class TestCurrentOrder < Test::Unit::TestCase
     mail.should_receive(:notify_error).with(RuntimeError).times(1)
     @selenium.click "commit"
     @selenium.wait_for_page_to_load "30000"
-    assert @selenium.is_text_present("Beim Versand Ihrer Bestellung ist ein Problem aufgetreten.\nEin Administrator wurde automatisch darüber informiert und wird mit Ihnen Kontakt aufnehmen.")
+    assert @selenium.is_text_present("Ihre Bestellung wurde an die Vétoquinol AG versandt.")
     @selenium.wait_for_page_to_load "30000"
     assert_equal "BBMB | Home", @selenium.get_title
     assert @selenium.is_text_present("Aktuelle Bestellung: 0 Positionen")
@@ -203,7 +203,7 @@ class TestCurrentOrder < Test::Unit::TestCase
     @selenium.click "order_transfer"
     @selenium.wait_for_page_to_load "30000"
 
-    assert @selenium.is_text_present("Aktuelle Bestellung: 2 Positionen", "Most likely firefox is blocking Javascript-Fileupload.")
+    assert @selenium.is_text_present("Aktuelle Bestellung: 2 Positionen"), "Most likely firefox is blocking Javascript-Fileupload."
     assert @selenium.is_text_present("product - by pcode")
     assert @selenium.is_text_present("product - by ean13")
     assert @selenium.is_text_present("Unidentifiziertes Produkt (Tramal gtt 10 ml 100 mg/ml, EAN-Code: 7680437880197, Pharmacode: 933022)")

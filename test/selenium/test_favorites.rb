@@ -122,7 +122,8 @@ class TestFavorites < Test::Unit::TestCase
     @selenium.wait_for_page_to_load "30000"
     assert_equal "BBMB | Schnellbestellung", @selenium.get_title
 
-    assert @selenium.is_text_present("Aktuelle Schnellbest.: 2 Positionen", "Most likely firefox is blocking Javascript-Fileupload.")
+    assert @selenium.is_text_present("Aktuelle Schnellbest.: 2 Positionen"),
+           "Most likely firefox is blocking Javascript-Fileupload."
     assert @selenium.is_text_present("product - by pcode")
     assert @selenium.is_text_present("product - by ean13")
     assert @selenium.is_text_present("Unidentifiziertes Produkt (Tramal gtt 10 ml 100 mg/ml, EAN-Code: 7680437880197, Pharmacode: 933022)")
