@@ -155,7 +155,7 @@ Ein Administrator wurde automatisch darüber informiert und wird mit Ihnen Konta
       :unavailable0             =>  "Unidentifiziertes Produkt (",
       :unavailable1             =>  ")",
       :version                  =>  "Commit-ID",
-      :welcome                  =>  "Wilkommen bei Vétoquinol",
+      :welcome                  =>  "Willkommen bei Vétoquinol",
       :ywesee                   =>  "ywesee.com",
     }
   }
