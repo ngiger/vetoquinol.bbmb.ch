@@ -4,8 +4,6 @@
 require 'bbmb'
 require 'bbmb/model/customer'
 require 'bbmb/model/product'
-require 'encoding/character/utf-8'
-require 'iconv'
 
 module BBMB
   module Util
@@ -31,7 +29,8 @@ module BBMB
       def postprocess(persistence=BBMB.persistence)
       end
       def string(str)
-        str = u(Iconv.new('utf-8', 'latin1').iconv(str.to_s)).strip
+        # str = u(Iconv.new('utf-8', 'latin1').iconv(str.to_s)).strip
+        str = str.encode('utf-8')
         str.gsub(/\s+/, ' ') unless str.empty? 
       end
     end
