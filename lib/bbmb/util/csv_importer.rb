@@ -15,6 +15,7 @@ module BBMB
         #CSV.parse(io, ";") { |record|
         #FasterCSV.parse(io, :col_sep => ";", :row_sep => "\n") { |record|
         #CSVParser.parse(io, false, ';').each { |record|
+        io = io.split("\n") if io.is_a?(String)
         count = 0
         io.each { |line|
           record = line.split(';')
@@ -29,7 +30,7 @@ module BBMB
       def postprocess(persistence=BBMB.persistence)
       end
       def string(str)
-        # str = u(Iconv.new('utf-8', 'latin1').iconv(str.to_s)).strip
+        return nil unless str
         str = str.encode('utf-8')
         str.gsub(/\s+/, ' ') unless str.empty? 
       end

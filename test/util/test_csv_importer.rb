@@ -1,48 +1,37 @@
 #!/usr/bin/env ruby
+# encoding: utf-8
 # Util::TestUpdater -- bbmb.ch -- 14.09.2006 -- hwyss@ywesee.com
 
 $: << File.expand_path('..', File.dirname(__FILE__))
 $: << File.expand_path('../../lib', File.dirname(__FILE__))
 
-require 'test/unit'
 require 'bbmb/util/csv_importer'
 require 'stub/persistence'
-require 'flexmock'
+require 'flexmock/minitest'
+require 'minitest/autorun'
+require 'pp'
 
 module BBMB
   module Util
-    class TestCsvImporter < Test::Unit::TestCase
-      def test_string
-        importer = CsvImporter.new
-        assert_nil(importer.string(''))
-        assert_equal(u("\303\244\303\266\303\274"), importer.string('äöü'))
-      end
-    end
-    class TestCustomerImporter < Test::Unit::TestCase
-      include FlexMock::TestCase
+    class TestCustomerImporter < ::Minitest::Test
       def setup
         Model::Customer.clear_instances
         BBMB.server = flexmock('server')
         BBMB.server.should_ignore_missing
       end
       def test_import
-        src = <<-EOS
-15047;1061;;VETOQU;Herr Dr.med.vet.;Aeberhard Ueli;Gemeindehausplatz 4;rue strasse;;;5323;BERNE;;;;; 
-15048;1061;;VETOQU;Herr Dkr;FARMACIA SAN ROCCO SA;PIAZZA SIMEN 7;;;;6500;BELLINZONA;;;;; 
-15050;1061;;VETOQU;Herr Dr.med.vet.;Holliger Rudolf;Boniswilerstrasse 8;;;;5707;Seengen;;;;; 
-15055;1061;;VETOQU;Herr Dr.med.vet.;Minder H.P.;Schäfliwiese 13;;;;9306;Freidorf TG;;;;; 
-15057;1061;;VETOQU;;ESSAI;RUE DES FINCELLES;;;;4355;LURE;;;;; 
-15065;1061;;VETOQU;;Apotheke Bahnhof;Frankfurt Platze;;;;8790;Zurich;;;;; 
-15073;1061;;VETOQU;;ESSAI AYT DT TVS;RUE DES FINCELLES;;;;4355;LURE;;;;; 
-15074;1061;;VETOQU;;ESSAI NON AYT DT;RUE DES FINCELLES;;;;4355;LURE;;;;; 
-15075;1061;;VETOQU;;Client Suisse AD-TVS;8, Friedrich Strasse;;;;8900;Zurich;;;;089065789; 
-15078;1061;;VETOQU;;CLIENT SUISSE AYANT DROIT TVS;RUE DE BERN;;;;3123;BELP;;;;00 41 31 818 56 50; 
-        EOS
+        zurich = "ZÃ¼rich"
+        filename = File.expand_path(File.join(File.dirname(__FILE__), '..', 'data', 'kunden.csv'))
+        src = File.read(filename, :encoding => 'iso-8859-1')
         persistence = flexmock("persistence")
-        persistence.should_receive(:save).times(10).and_return { |customer|
+        found_zurich = false
+        persistence.should_receive(:save).times(10).and_return do |customer|
           assert_instance_of(Model::Customer, customer)
-        }
-        CustomerImporter.new.import(src, persistence)
+          found_zurich = true if zurich.eql?(customer.city)
+        end
+        nr_customers = CustomerImporter.new.import(src, persistence)
+        assert_equal(10, nr_customers)
+        assert_equal(true, found_zurich)
       end
       def test_import_record
         line = <<-EOS
@@ -96,8 +85,7 @@ module BBMB
         importer.import(line, persistence)
       end
     end
-    class TestProductImporter < Test::Unit::TestCase
-      include FlexMock::TestCase
+    class TestProductImporter < ::Minitest::Test
       def setup
         Model::Product.clear_instances
       end

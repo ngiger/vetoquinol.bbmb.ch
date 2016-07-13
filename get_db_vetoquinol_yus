@@ -1,6 +1,6 @@
 #!/bin/bash -v
 
-DB_NAME=virbac_yus
+DB_NAME=bbmb_yus
 
 yyyy=`date -d '1 days ago' +"%Y"`
 mm=`date -d '1 days ago' +"%m"`
@@ -25,9 +25,9 @@ then
   exit 1
 fi
 
-sudo -u postgres psql -c "create user virbac with UNENCRYPTED password 'virbac';"
-sudo -u postgres psql -c "alter user virbac with UNENCRYPTED password 'virbac';"
-sudo -u postgres psql -c "grant all privileges on database $DB_NAME to virbac ;"
+sudo -u postgres psql -c "create user bbmb with UNENCRYPTED password 'bbmb';"
+sudo -u postgres psql -c "alter user bbmb with UNENCRYPTED password 'bbmb';"
+sudo -u postgres psql -c "grant all privileges on database $DB_NAME to bbmb ;"
 sudo -u postgres psql -c 'create role apache with LOGIN;'
 sudo -u postgres psql -c "create role $DB_NAME with LOGIN;"
 
