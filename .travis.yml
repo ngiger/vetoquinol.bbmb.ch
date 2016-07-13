@@ -8,7 +8,7 @@ sudo: false
 before_install:
   - gem --version
 
-script: bundle exec test/suite.rb
+script: bundle exec ruby test/suite.rb
 
 rvm:
   - 2.2
