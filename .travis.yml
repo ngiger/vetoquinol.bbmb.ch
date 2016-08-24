@@ -11,7 +11,7 @@ before_install:
 script: bundle exec ruby test/suite.rb
 
 rvm:
-  - 2.2
+  - 2.2.3 # rack needs >= 2.2.2
   - 2.3.0
   - ruby-head
   
