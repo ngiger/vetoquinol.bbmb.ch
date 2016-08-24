@@ -55,15 +55,17 @@ module BBMB
         customer = Model::Customer.find_by_customer_id(customer_id) \
           || Model::Customer.new(customer_id)
         # TODO: protect user-edited data
-        CUSTOMER_MAP.each { |idx, name|
+        CUSTOMER_MAP.each do |idx, name|
           unless customer.protects? name
-            customer.send("#{name}=", string(record[idx]))
+            value = string(record[idx])
+            customer.send("#{name}=", value ? value.strip : '')
           end
-        }
+        end
         customer
       end
     end
     class ProductImporter < CsvImporter
+      attr_reader :active_products
       PRODUCT_MAP = {
         0		=>	:status,
         2		=>	:ean13,
@@ -97,15 +99,16 @@ module BBMB
           @active_products.store(article_number, true)
           product = Model::Product.find_by_article_number(article_number) \
             || Model::Product.new(article_number)
-          PRODUCT_MAP.each { |idx, name|
+          PRODUCT_MAP.each do |idx, name|
             value = string(record[idx])
+            next unless value
             case name
             when :description
-              product.description.de = value
+              product.description.de = value.strip
             else
-              product.send("#{name}=", value)
+              product.send("#{name}=", value.strip)
             end
-          }
+          end
           product
         end
       end
