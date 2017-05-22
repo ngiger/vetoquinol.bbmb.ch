@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'odba'
-gem 'bbmb'
+gem 'bbmb', '>= 2.2.3'
 
 group :debugger do
   if RUBY_VERSION.match(/^1/)
