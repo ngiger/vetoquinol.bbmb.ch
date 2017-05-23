@@ -1,7 +1,9 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    bbmb (2.2.3)
+    ansi (1.5.0)
+    ast (2.3.0)
+    bbmb (2.2.5)
       deprecated (= 2.0.1)
       hpricot
       htmlgrid
@@ -45,6 +47,9 @@ GEM
     odba (1.1.2)
       ydbd-pg (>= 0.5.1)
       ydbi (>= 0.5.1)
+    oga (2.10)
+      ast
+      ruby-ll (~> 2.1)
     pg (0.17.0)
     pry (0.10.4)
       coderay (~> 1.1.0)
@@ -57,6 +62,7 @@ GEM
       pry (~> 0.9)
       yard (~> 0.8)
     rack (2.0.3)
+    rake (12.0.0)
     rclconf (1.0.0)
     rrba (1.0.0)
     rspec (3.5.0)
@@ -72,6 +78,9 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.5.0)
     rspec-support (3.5.0)
+    ruby-ll (2.1.2)
+      ansi
+      ast
     rubyzip (1.2.0)
     sbsm (1.4.1)
       chrono_logger
@@ -127,12 +136,14 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bbmb (>= 2.2.3)
+  bbmb (>= 2.2.5)
   flexmock
   minitest
   odba
+  oga
   pry-byebug
   pry-doc
+  rake
   rspec
   watir
   watir-webdriver
