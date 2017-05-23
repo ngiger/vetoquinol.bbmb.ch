@@ -35,6 +35,9 @@ use Rack::ContentLength
 SBSM.info "Starting Rack::Server BBMB::BBMB::Util.new with log_pattern #{BBMB.config.log_pattern}"
 
 $stdout.sync = true
+VERSION = `git rev-parse HEAD`
+puts msg = "Used version: sbsm #{SBSM::VERSION}, bbmb #{BBMB::VERSION} vetoquinol #{VERSION}"
+SBSM.logger.info(msg)
 
 my_app = BBMB::Util::RackInterface.new(app: BBMB::Util::App.new)
 app = Rack::ShowExceptions.new(Rack::Lint.new(my_app))
