@@ -18,6 +18,7 @@ require 'bbmb/config'
     break
   end
 end
+ENV['SERVER_PORT'] =  BBMB.config.server_port.to_s if BBMB.config.respond_to?(:server_port)
 
 require 'bbmb/html/util/validator'
 require 'bbmb/util/app'
