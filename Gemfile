@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 gem 'odba'
 gem 'rake'
 gem 'oga'
-gem 'bbmb', '>= 2.2.5'
+gem 'bbmb', '>= 2.2.6'
 
 group :debugger do
   if RUBY_VERSION.match(/^1/)
