@@ -22,10 +22,10 @@ module BBMB
         config.should_receive(:importers).and_return(importers)
       end
       def test_import_customers
-        BBMB.logger = flexmock("logger")
-        BBMB.logger.should_ignore_missing
+        SBSM.logger = flexmock("logger")
+        SBSM.logger.should_ignore_missing
         persistence = flexmock("persistence")
-        flexstub(CustomerImporter).should_receive(:new).times(1).and_return { 
+        flexstub(CustomerImporter).should_receive(:new).times(1).and_return {
           importer = flexmock('importer')
           importer.should_receive(:import).times(1).and_return { |io|
             assert_equal('data', io)
@@ -35,10 +35,10 @@ module BBMB
         Updater.import("CustomerImporter", [], "data")
       end
       def test_import_products
-        BBMB.logger = flexmock("logger")
-        BBMB.logger.should_ignore_missing
+        SBSM.logger = flexmock("logger")
+        SBSM.logger.should_ignore_missing
         persistence = flexmock("persistence")
-        flexstub(ProductImporter).should_receive(:new).times(1).and_return { 
+        flexstub(ProductImporter).should_receive(:new).times(1).and_return {
           importer = flexmock('importer')
           importer.should_receive(:import).times(1).and_return { |io|
             assert_equal('data', io)
@@ -48,12 +48,12 @@ module BBMB
         Updater.import("ProductImporter", [], "data")
       end
       def test_run__ywskund_csv
-        flexstub(Updater).should_receive(:import).times(1).and_return { 
+        flexstub(Updater).should_receive(:import).times(1).and_return {
           |importer, args, data|
           assert_equal("CustomerImporter", importer)
           assert_equal("mockdata", data)
         }
-        flexstub(PollingManager).should_receive(:new).and_return { 
+        flexstub(PollingManager).should_receive(:new).and_return {
           mgr = flexmock("PollingManager")
           mgr.should_receive(:poll_sources).and_return { |block|
             block.call("ywskund.csv", "mockdata")
@@ -63,12 +63,12 @@ module BBMB
         Updater.run
       end
       def test_run__ywsarti_csv
-        flexstub(Updater).should_receive(:import).times(1).and_return { 
+        flexstub(Updater).should_receive(:import).times(1).and_return {
           |importer, args, data|
           assert_equal("ProductImporter", importer)
           assert_equal("mockdata", data)
         }
-        flexstub(PollingManager).should_receive(:new).and_return { 
+        flexstub(PollingManager).should_receive(:new).and_return {
           mgr = flexmock("PollingManager")
           mgr.should_receive(:poll_sources).and_return { |block|
             block.call("ywsarti.csv", "mockdata")
