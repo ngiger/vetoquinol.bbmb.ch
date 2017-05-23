@@ -1,7 +1,7 @@
-function delete_position(url, evt, id)
+require(["dojo/domReady!"], function delete_position(url, evt, id)
 {
   var form = document.createElement( "form" );
-  form.action = url; 
+  form.action = url;
   form.style.display = 'none';
   form.method = 'POST'
   var data = {
@@ -17,9 +17,9 @@ function delete_position(url, evt, id)
   }
   document.body.appendChild(form);
   form.submit();
-}
+});
 
-function update_order_callback(data)
+require(["dojo/domReady!"], function update_order_callback(data)
 {
 	var name, input, value;
 	for(name in data)
@@ -29,7 +29,7 @@ function update_order_callback(data)
 			value = data[name];
 			if(input.tagName == 'SPAN')
 			{
-				input.innerHTML = value;	
+				input.innerHTML = value;
 			}
 			else
 			{
@@ -37,9 +37,9 @@ function update_order_callback(data)
 			}
 		}
 	}
-}
+});
 
-function update_order(url, form)
+require(["dojo/domReady!"], function update_order(url, form)
 {
   var event = form.event.value;
   form.event.value = 'ajax';
@@ -51,15 +51,15 @@ function update_order(url, form)
 		mimetype: "text/json"
 	});
   form.event.value = event;
-}
+});
 
-function zeroise(form) 
+require(["dojo/domReady!"], function zeroise(form)
 {
-  for(name in form.elements) { 
+  for(name in form.elements) {
     var node = form[name];
     if(node && typeof(node) == 'object' && node.tagName == 'INPUT' && node.type == 'text') {
-      node.value = '0'; 
+      node.value = '0';
     }
 
   }
-}
+});
