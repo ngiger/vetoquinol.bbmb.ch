@@ -28,6 +28,12 @@ require 'rack/show_exceptions'
 require 'rack'
 require 'sbsm/logger'
 require 'bbmb/util/rack_interface'
+
+# We must load (not require) the CSV-Importer from Vetoquinol
+vetoquinol_importer = File.join(lib_dir, 'bbmb/util/csv_importer.rb')
+load vetoquinol_importer
+SBSM.info msg = "Loading #{vetoquinol_importer}"
+puts msg
 require 'webrick'
 SBSM.logger= ChronoLogger.new(BBMB.config.log_pattern)
 use Rack::CommonLogger, SBSM.logger
