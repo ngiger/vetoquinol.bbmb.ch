@@ -5,8 +5,8 @@
 $: << File.expand_path('..', File.dirname(__FILE__))
 $: << File.expand_path('../../lib', File.dirname(__FILE__))
 
-require 'bbmb/util/csv_importer'
 require 'stub/persistence'
+require 'bbmb/util/csv_importer'
 require 'flexmock/minitest'
 require 'minitest/autorun'
 require 'pp'
@@ -179,7 +179,7 @@ gesperrt;402750;;Info-Katalog Eq "nor";;0;;;;;;;;;Y;;;;;;;;;;;VETOQU;112;;0;0;0;
         delete_me = Model::Product.new('1234')
         persistence.should_receive(:all).and_return { |klass, block|
           assert_equal(Model::Product, klass)
-          block.call(delete_me) 
+          block.call(delete_me)
         }
         persistence.should_receive(:delete).with(delete_me)
         ProductImporter.new.import(line, persistence)

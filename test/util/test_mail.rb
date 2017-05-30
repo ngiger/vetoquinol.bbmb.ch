@@ -138,7 +138,7 @@ Totale dell'ordine incl. %10.2f
           assert_equal('', customer_16659.phone_private)
           assert_equal('', customer_16659.phone_mobile)
           assert_equal('', customer_16659.fax)
-          assert_equal('', customer_16659.email)
+          assert_nil(customer_16659.email)
         }
         customer_file = File.expand_path(File.join(File.dirname(__FILE__), '..', 'data', 'ywskund.csv'))
         src = File.read(customer_file, :encoding => 'iso-8859-1')

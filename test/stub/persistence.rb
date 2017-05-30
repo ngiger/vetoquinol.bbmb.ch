@@ -10,6 +10,8 @@ class Object
 end
 module BBMB
   module Persistable
+    def odba_store(name = nil)
+    end
     def Persistable.append_features(mod)
       super
       mod.module_eval {
@@ -28,9 +30,9 @@ module BBMB
             index_suffix = keys.join('_and_')
             method_name = sprintf("find_by_%s", index_suffix)
             meta_eval {
-              define_method(method_name) { |*vals| 
+              define_method(method_name) { |*vals|
                 @instances.find { |instance|
-                  vals == keys.collect { |key| instance.send(key) } 
+                  vals == keys.collect { |key| instance.send(key) }
                 }
               }
             }

@@ -4,13 +4,12 @@
 require 'bbmb'
 require 'bbmb/model/customer'
 require 'bbmb/model/product'
-
 module BBMB
   module Util
     class CsvImporter
       def import(io, persistence=BBMB.persistence)
-        ## amazingly, all three possible non-naive approaches to parsing 
-        #  CSV fail with the test-data provided by Vetoquinol. For now, use the 
+        ## amazingly, all three possible non-naive approaches to parsing
+        #  CSV fail with the test-data provided by Vetoquinol. For now, use the
         #  naive approach
         #CSV.parse(io, ";") { |record|
         #FasterCSV.parse(io, :col_sep => ";", :row_sep => "\n") { |record|
@@ -32,7 +31,7 @@ module BBMB
       def string(str)
         return nil unless str
         str = str.encode('utf-8')
-        str.gsub(/\s+/, ' ') unless str.empty? 
+        str.gsub(/\s+/, ' ') unless str.empty?
       end
     end
     class CustomerImporter < CsvImporter
@@ -49,7 +48,7 @@ module BBMB
         14	=>	:phone_private,
         15	=>	:fax,
         16	=>	:email,
-      }	
+      }
       def import_record(record)
         customer_id = string(record[0])
         customer = Model::Customer.find_by_customer_id(customer_id) \
@@ -58,7 +57,14 @@ module BBMB
         CUSTOMER_MAP.each do |idx, name|
           unless customer.protects? name
             value = string(record[idx])
-            customer.send("#{name}=", value ? value.strip : '')
+            if name.to_s.eql?('email')
+              if value && value.strip.length > 0
+                customer.set_email_without_yus(value)
+                customer.odba_store
+              end
+            else
+              customer.send("#{name}=", value ? value.strip : '')
+            end
           end
         end
         customer
