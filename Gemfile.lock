@@ -3,7 +3,7 @@ GEM
   specs:
     ansi (1.5.0)
     ast (2.3.0)
-    bbmb (2.2.7)
+    bbmb (2.2.8)
       deprecated (= 2.0.1)
       hpricot
       htmlgrid
@@ -134,7 +134,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bbmb (>= 2.2.7)
+  bbmb (>= 2.2.8)
   flexmock
   minitest
   odba
