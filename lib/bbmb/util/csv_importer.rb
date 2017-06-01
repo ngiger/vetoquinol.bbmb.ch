@@ -14,9 +14,18 @@ module BBMB
         #CSV.parse(io, ";") { |record|
         #FasterCSV.parse(io, :col_sep => ";", :row_sep => "\n") { |record|
         #CSVParser.parse(io, false, ';').each { |record|
-        io = io.split("\n") if io.is_a?(String)
+        if io.is_a?(String)
+          begin
+            lines = io.split("\n")
+          rescue
+            lines = io.force_encoding('ISO-8859-1').split("\n")
+          end
+        else
+          lines = io
+        end
+
         count = 0
-        io.each { |line|
+        lines.each { |line|
           record = line.split(';')
           if(object = import_record(record))
             persistence.save(object)
@@ -30,8 +39,12 @@ module BBMB
       end
       def string(str)
         return nil unless str
-        str = str.encode('utf-8')
-        str.gsub(/\s+/, ' ') unless str.empty?
+        begin
+          encoded = str.encode('utf-8')
+        rescue => error
+          encoded = str.force_encoding('ISO-8859-1').encode('utf-8')
+        end
+        encoded.gsub(/\s+/, ' ') unless encoded.empty?
       end
     end
     class CustomerImporter < CsvImporter
